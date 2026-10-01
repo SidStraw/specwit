@@ -1,37 +1,48 @@
 {
-  "name": "@gov/cli",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Local Observe-mode verification helper for OpenSpec workflows",
+  "name": "@sidtw/specwit",
+  "version": "0.3.0",
+  "description": "SpecWit, short for SpecWitness, connects specifications with observed behavior and verification evidence, while making remaining unknowns explicit.",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "bin": {
-    "gov": "./dist/gov.mjs"
+    "specwit": "./dist/specwit.mjs"
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "README.zh-TW.md",
+    "CHANGELOG.md",
+    "MIGRATION.md",
+    "MIGRATION.zh-TW.md",
+    "LICENSE",
+    "NOTICE"
   ],
   "scripts": {
-    "build": "tsdown && node scripts/licenses.mjs",
-    "typecheck": "tsc --noEmit",
-    "test": "pnpm build && vitest run",
-    "prepack": "pnpm build"
+    "build": "node scripts/resources.mjs && tsdown && node scripts/licenses.mjs",
+    "typecheck": "node scripts/resources.mjs && tsc --noEmit",
+    "test": "npm run build && vitest run",
+    "test:openspec": "npm run build && node scripts/smoke-openspec.mjs",
+    "prepack": "npm run build"
   },
   "devDependencies": {
-    "minimist": "catalog:inlined",
-    "zod": "catalog:inlined",
-    "ajv": "catalog:inlined",
-    "@types/minimist": "catalog:dev",
-    "@types/node": "catalog:dev",
-    "tsdown": "catalog:dev",
-    "typescript": "catalog:dev",
-    "vitest": "catalog:dev"
+    "minimist": "1.2.8",
+    "zod": "4.6.5",
+    "ajv": "8.20.0",
+    "yaml": "2.8.1",
+    "@types/minimist": "1.2.5",
+    "@types/node": "22.20.4",
+    "tsdown": "0.23.0",
+    "typescript": "5.9.3",
+    "vitest": "5.0.3"
   },
   "engines": {
     "node": ">=22.18.0"
   },
   "exports": {
-    ".": "./dist/gov.mjs",
+    ".": "./dist/specwit.mjs",
     "./package.json": "./package.json"
   },
   "inlinedDependencies": {
@@ -40,6 +51,7 @@
     "fast-uri": "3.1.8",
     "json-schema-traverse": "1.0.0",
     "minimist": "1.2.8",
+    "yaml": "2.8.1",
     "zod": "4.6.5"
   }
 }

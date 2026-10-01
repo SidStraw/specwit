@@ -5,9 +5,9 @@ import { dirname, join } from 'node:path'
 const require = createRequire(import.meta.url)
 const ajvRequire = createRequire(require.resolve('ajv'))
 const metadata = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
-const notices = ['Third-party licenses for bundled dependencies.\n']
+const notices = [readFileSync(new URL('../NOTICE', import.meta.url), 'utf8'), 'Third-party licenses for bundled dependencies.\n']
 for (const [name, version] of Object.entries(metadata.inlinedDependencies)) {
-  const resolver = ['minimist', 'zod', 'ajv'].includes(name) ? require : ajvRequire
+  const resolver = ['minimist', 'zod', 'ajv', 'yaml'].includes(name) ? require : ajvRequire
   const directory = dirname(resolver.resolve(`${name}/package.json`))
   let license
   for (const file of ['LICENSE', 'LICENSE.md', 'LICENSE.txt']) {

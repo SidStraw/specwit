@@ -1,0 +1,7 @@
+title = "SpecWit secret scanning"
+
+[extend]
+useDefault = true
+
+# Do not allowlist entire fixtures, generated files, or historical commits.
+# Reports are redacted by scripts/check-secrets.mjs and stay outside Git.

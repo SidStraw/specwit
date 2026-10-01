@@ -2,7 +2,7 @@
 
 > v0.3｜更新日期：2026-09-30。用途：確認原稿概念及後續討論均有去向。已確認方向見 [決策表 F6](feasibility-and-decisions.md#f6)；其餘技術細節仍為提案，不表示已實作。
 
-原稿完整保存於 [original-draft.md](source/original-draft.md)，未改寫原文。重整後的技術補充與取捨原因見 [可行性文件 F3](feasibility-and-decisions.md#f3)。
+原稿完整保存於 [original-draft.md](source/original-draft.md)，未改寫原文；其中的舊工具名稱僅供歷史追溯，現行品牌與 CLI 統一為 SpecWit／`specwit`。重整後的技術補充與取捨原因見 [可行性文件 F3](feasibility-and-decisions.md#f3)。
 
 | 原節 | 原標題 | 處理 | 整理後位置與說明 |
 |---|---|---|---|
@@ -17,7 +17,7 @@
 | 9 | Harness Architecture | 補強 | [規格 9](specification.md#s9)：保留 execute／abort／capabilities，增加 event 與停止確認契約。 |
 | 10 | 本機開發整合 | 分期 | [規格 9](specification.md#s9)：首版先 OpenCode Plugin／runtime；其他 Harness 延後。 |
 | 11 | Plugin / Hook / MCP 的分工 | 修正 | [規格 9](specification.md#s9)：Skill／MCP／Hook 分工保留，Hook 不作完整安全邊界。 |
-| 12 | govd | 分期 | [規格 9](specification.md#s9)：govd 與可信元件分離保留，daemon 延後按需求導入。 |
+| 12 | govd（歷史名稱） | 分期 | [規格 9](specification.md#s9)：specwitd 與可信元件分離保留，daemon 延後按需求導入。 |
 | 13 | CI / Cloud 模式 | 調整 | [規格 10](specification.md#s10)：CI 從專案契約建立新 Run，明確完成與清理；不另建遠端 store。 |
 | 14 | Pi / Headless Runner | 分期 | [規格 9](specification.md#s9)：Pi 延後，首版已指定 OpenCode；歷史工具查核保留於 F2。 |
 | 15 | 三種執行模式 | 保留 | [規格 3](specification.md#s3)：Developer、CI、Autonomous 模式，另分治理 Profile。 |

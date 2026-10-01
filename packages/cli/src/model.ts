@@ -42,6 +42,7 @@ export const contractSchema = z.strictObject({
     requirementIds: z.array(text).optional(),
   })),
   execution: z.strictObject({
+    runnerRef: text.optional(),
     candidate: nullableText,
     runId: nullableText,
     maxAttempts: z.number().int().min(1).max(100).nullable(),
@@ -106,7 +107,7 @@ export type CheckResult = z.infer<typeof resultSchema>
 
 export const runSchema = z.strictObject({
   schemaVersion: z.literal(1),
-  toolVersion: z.literal('0.1.0'),
+  toolVersion: z.string().regex(/^\d+\.\d+\.\d+$/),
   assurance: z.literal('Observe'),
   taskId: text,
   runId: z.uuid(),
@@ -125,7 +126,7 @@ export const runSchema = z.strictObject({
 })
 export type Run = z.infer<typeof runSchema>
 
-export class GovError extends Error {
+export class SpecWitError extends Error {
   constructor(public code: string, message: string) {
     super(message)
   }
@@ -135,7 +136,7 @@ export function parse<T>(schema: z.ZodType<T>, value: unknown, label: string): T
   const result = schema.safeParse(value)
   if (!result.success) {
     const fields = result.error.issues.map(issue => `${issue.path.join('.') || '(root)'}: ${issue.message}`).join('; ')
-    throw new GovError('INVALID_DATA', `${label}: ${fields}`)
+    throw new SpecWitError('INVALID_DATA', `${label}: ${fields}`)
   }
   return result.data
 }

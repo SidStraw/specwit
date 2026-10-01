@@ -1,20 +1,20 @@
 import { createHash, randomUUID } from 'node:crypto'
 import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, realpathSync, renameSync, writeFileSync } from 'node:fs'
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path'
-import { GovError } from './model'
+import { SpecWitError } from './model'
 
 export const MAX_FILE_BYTES = 16 * 1024 * 1024
 
 export function projectRoot(path: string): string {
   const root = realpathSync(resolve(path))
-  if (!lstatSync(root).isDirectory()) throw new GovError('INVALID_ROOT', '專案根目錄必須是資料夾。')
+  if (!lstatSync(root).isDirectory()) throw new SpecWitError('INVALID_ROOT', 'Project root must be a directory.')
   safePath(root, 'openspec')
   return root
 }
 
 export function validId(id: string): string {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id) || id === 'archive')
-    throw new GovError('INVALID_TASK_ID', 'change 名稱必須是 kebab-case，且不能是 archive。')
+    throw new SpecWitError('INVALID_TASK_ID', 'Change name must be kebab-case and cannot be archive.')
   return id
 }
 
@@ -22,12 +22,12 @@ export function validId(id: string): string {
 export function safePath(root: string, ref: string): string {
   const parts = ref.replace(/\/$/, '').split('/')
   if (!ref || isAbsolute(ref) || ref.includes('\\') || parts.some(part => !part || part === '.' || part === '..') || /^[a-z]:/i.test(ref))
-    throw new GovError('UNSAFE_PATH', '只接受專案內、沒有 .. 或反斜線的相對路徑。')
+    throw new SpecWitError('UNSAFE_PATH', 'Use project-relative paths without .. or backslashes.')
   let path = root
   for (const part of parts) {
     path = join(path, part)
     try {
-      if (lstatSync(path).isSymbolicLink()) throw new GovError('UNSAFE_PATH', `不接受 symlink：${ref}`)
+      if (lstatSync(path).isSymbolicLink()) throw new SpecWitError('UNSAFE_PATH', `Symlink paths are not supported: ${ref}`)
     }
     catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
@@ -39,15 +39,15 @@ export function safePath(root: string, ref: string): string {
 export function readText(root: string, ref: string): string {
   const path = safePath(root, ref)
   const stat = lstatSync(path)
-  if (!stat.isFile() || stat.size > MAX_FILE_BYTES) throw new GovError('INVALID_FILE', `不是一般檔案或超過 16 MiB：${ref}`)
+  if (!stat.isFile() || stat.size > MAX_FILE_BYTES) throw new SpecWitError('INVALID_FILE', `Not a regular file, or larger than 16 MiB: ${ref}`)
   return readFileSync(path, 'utf8')
 }
 
 export function readJson(root: string, ref: string): unknown {
   const text = readText(root, ref)
-  if (Buffer.byteLength(text) > 1024 * 1024) throw new GovError('INVALID_DATA', `JSON 超過 1 MiB：${ref}`)
+  if (Buffer.byteLength(text) > 1024 * 1024) throw new SpecWitError('INVALID_DATA', `JSON exceeds 1 MiB: ${ref}`)
   try { return JSON.parse(text) }
-  catch { throw new GovError('INVALID_JSON', `無法解析 JSON：${ref}`) }
+  catch { throw new SpecWitError('INVALID_JSON', `Cannot parse JSON: ${ref}`) }
 }
 
 export function sha256(value: string | Buffer): string {
@@ -57,7 +57,7 @@ export function sha256(value: string | Buffer): string {
 export function fileDigest(root: string, ref: string): string {
   const path = safePath(root, ref)
   const stat = lstatSync(path)
-  if (!stat.isFile() || stat.size > MAX_FILE_BYTES) throw new GovError('INVALID_FILE', `不是一般檔案或超過 16 MiB：${ref}`)
+  if (!stat.isFile() || stat.size > MAX_FILE_BYTES) throw new SpecWitError('INVALID_FILE', `Not a regular file, or larger than 16 MiB: ${ref}`)
   return sha256(readFileSync(path))
 }
 
@@ -73,7 +73,7 @@ export function filesUnder(root: string, ref: string): string[] {
   function walk(entry: string): void {
     const path = safePath(root, entry)
     const stat = lstatSync(path)
-    if (found.length >= 10000) throw new GovError('TOO_MANY_FILES', '每個輸入目錄最多支援 10,000 個檔案。')
+    if (found.length >= 10000) throw new SpecWitError('TOO_MANY_FILES', 'Each input directory may contain at most 10,000 files.')
     if (stat.isDirectory()) {
       for (const name of readdirSync(path).sort()) {
         if (name === '.git' || name === 'node_modules') continue
@@ -81,7 +81,7 @@ export function filesUnder(root: string, ref: string): string[] {
       }
     }
     else if (stat.isFile()) found.push(relative(root, path).split('\\').join('/'))
-    else throw new GovError('INVALID_FILE', `不支援的檔案類型：${entry}`)
+    else throw new SpecWitError('INVALID_FILE', `Unsupported file type: ${entry}`)
   }
   walk(ref)
   return found
@@ -89,7 +89,7 @@ export function filesUnder(root: string, ref: string): string[] {
 
 export function writeJson(root: string, ref: string, value: unknown): void {
   const content = `${JSON.stringify(value, null, 2)}\n`
-  if (Buffer.byteLength(content) > 1024 * 1024) throw new GovError('OUTPUT_LIMIT', 'Run 紀錄超過 1 MiB；保留先前資料，不寫入無法重新讀取的紀錄。')
+  if (Buffer.byteLength(content) > 1024 * 1024) throw new SpecWitError('OUTPUT_LIMIT', 'Run record exceeds 1 MiB; preserve the previous readable record.')
   const path = safePath(root, ref)
   mkdirSync(dirname(path), { recursive: true })
   safePath(root, ref)

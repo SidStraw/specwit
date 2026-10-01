@@ -2,13 +2,13 @@ schema: governed-delivery
 
 context: |
   使用台灣繁體中文；保留 OpenSpec 結構標題、SHALL/MUST、ID 與程式碼的英文。
-  本專案示範工程 AI 治理流程，優先整合 OpenCode；有流程設定與另行安裝的 gov CLI，保證範圍為 Observe。
+  本專案示範工程 AI 治理流程，優先整合 OpenCode；有流程設定與另行安裝的 specwit CLI，保證範圍為 Observe。
   先讀 README.md、WORKFLOW.md 與 GAPS.md。fixtures/ 是教學輸入，並非真實產品或人工核准。
   每條來源需求都要對應行為、人工項目、待澄清或經確認的排除理由；不可在摘要中消失。
   將規劃完成、程式實作、檢查結果、接受決策、Task 完成分開。檔案存在或核取方塊不是驗收證據。
   需求、binding、policy、verifier 或 Candidate 改變後，舊確認與結果需重新判定，不沿用 PASS。
   必要未知、未執行、過期或無效結果不得當成通過；可程式化但缺 adapter 的條件屬於缺口。
-  Gov 資料留在專案內，Task 明確完成後清除任務資料；保留交付成果與共用規則，不保留永久收據。
+  SpecWit 資料留在專案內，Task 明確完成後清除任務資料；保留交付成果與共用規則，不保留永久收據。
   本範例未提供受保護 runner、確認入口、Candidate freeze 或 finalizer；缺少能力時如實列為阻擋。
 
 rules:
@@ -35,7 +35,7 @@ operations:
   apply:
     guidance:
       - 開始前讀 WORKFLOW.md，核對 verification-contract.json 的確認來源、適用版本、binding 及既有授權。
-      - 若本目錄有 dist/gov.mjs，以 node dist/gov.mjs check <change> 執行前置檢查；若已安裝 gov，亦可用 gov check <change>。補齊條件後用同一入口的 verify/status 取得 Observe 結果；READY/PASS 不代表受信任核准或 Task 完成。
+      - 若本目錄有 dist/specwit.mjs，以 node dist/specwit.mjs validate <change> 執行前置檢查；若已安裝 specwit，亦可用 specwit validate <change>。補齊條件後用同一入口的 verify/status 取得 Observe 結果；READY/PASS 不代表受信任核准或 Task 完成。
       - 不要求重複核准已有且仍有效的授權；缺少有效確認或必要外部能力時回報具體缺口。
       - 依既有測試加有價值的增量驗證執行；不得自行改通過標準或將失敗與未知改寫成 PASS。
       - Candidate 修正後建立新 attempt，保留先前失敗；reviewer 回覆依 contracts/review-result.schema.json 接收，格式與證據對應另由外部接收端驗證。

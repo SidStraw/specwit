@@ -19,4 +19,4 @@ createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': types[extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
     res.end(body);
   } catch { res.writeHead(404).end('Not found'); }
-}).listen(port, '127.0.0.1', () => console.log(`GOV preview: http://127.0.0.1:${port}`));
+}).listen(port, '127.0.0.1', () => console.log(`SpecWit preview: http://127.0.0.1:${port}`));

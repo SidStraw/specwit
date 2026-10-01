@@ -1,0 +1,13 @@
+{
+  "context": "Use English for SpecWit planning artifacts; retain OpenSpec headings, SHALL/MUST, IDs and code. Read .governance/workflow.md. Trace every source requirement to behavior, human review, a question, or an explicit exclusion. Separate planning, implementation, observed results, acceptance and Task completion. Reassess confirmation and evidence after relevant inputs change. SpecWit currently provides Observe results only, not isolation, identity verification or a finalizer.",
+  "operations": {
+    "apply": [
+      "SpecWit: Read .governance/workflow.md; run specwit validate <change> before specwit verify <change>. Resolve actual blockers without inventing confirmation or evidence.",
+      "SpecWit: Use specwit status <change> after edits. Follow .governance/prompts/review.md when independent review is required. Reuse still-valid authorization.",
+      "SpecWit: Preserve contracts for a fresh CI Run when completionTarget is CI. specwit complete <change> --dry-run only previews cleanup; missing finalization remains BLOCKED_EXTERNAL."
+    ],
+    "archive": [
+      "SpecWit: Archive retains change files; it is not verification, Task finalization, or task-owned cleanup. Report this distinction and follow the project completion policy."
+    ]
+  }
+}

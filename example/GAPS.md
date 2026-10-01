@@ -34,7 +34,7 @@ G04 是宣稱受保護驗收的必要條件，不能等到量產才補；沒有�
 
 G08 還有狀態歸屬問題：內建 apply 在全勾選後會建議 archive，但外部清理會移除 change 與 tasks.md。完成入口必須在清理前核對條件、清理後核對資源，而不是期待 OpenSpec 保留一份永久 all_done 紀錄。
 
-## gov CLI 0.1.0 已補上的部分
+## SpecWit CLI 0.3.0 現有能力
 
 上表保留 OpenSpec 本身的界線；目前另有 [TypeScript CLI](../packages/cli/README.md)，以 minimist 解析參數、Zod 驗證資料、Ajv 載入 reviewer JSON Schema，並用 tsdown 打包。這是可執行的 Observe 切片，所有輸出仍為 `eligible: false`。
 

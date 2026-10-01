@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { createCheckIn } from '../src/check-in.mjs'
 
-const checkId = process.env.GOV_CHECK_ID
+const checkId = process.env.SPECWIT_CHECK_ID
 const observations = []
 try {
   if (checkId === 'B01') {

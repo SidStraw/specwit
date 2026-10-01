@@ -1,6 +1,6 @@
 # CLI 搭配示範的輸入
 
-這是一個獨立的教學模型，用於展示 OpenSpec 規劃與 gov 執行檢查的分工，不代表原 daily-check-in 產品已實作或核准。
+這是一個獨立的教學模型，用於展示 OpenSpec 規劃與 specwit 執行檢查的分工，不代表原 daily-check-in 產品已實作或核准。
 
 - R01：一次簽到回應仍 pending 時，重複 activate 只送出一筆請求。
 - R02：成功回應前不進入 completed；reward 必須取自該次回應，至少用 7、23 兩組值驗證。

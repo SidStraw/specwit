@@ -1,5 +1,5 @@
 {
-  "name": "gov-framework-website",
+  "name": "specwit-framework-website",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,10 +9,12 @@
     "build": "node scripts/build.mjs",
     "preview": "node scripts/serve.mjs --dist",
     "test": "node --test tests/*.test.mjs",
-    "cli:build": "pnpm --filter @gov/cli build",
-    "cli:test": "pnpm --filter @gov/cli test",
-    "cli:typecheck": "pnpm --filter @gov/cli typecheck",
-    "cli:pack": "pnpm --filter @gov/cli pack --out example/dist/gov-cli-0.1.0.tgz && node scripts/package-example.mjs",
+    "check:brand": "node scripts/check-brand.mjs",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "cli:build": "pnpm --filter @sidtw/specwit build",
+    "cli:test": "pnpm --filter @sidtw/specwit test",
+    "cli:typecheck": "pnpm --filter @sidtw/specwit typecheck",
+    "cli:pack": "node scripts/package-example.mjs",
     "example:demo": "pnpm cli:pack && node example/scripts/demo.mjs"
   },
   "engines": { "node": ">=22" }

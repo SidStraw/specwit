@@ -1,0 +1,51 @@
+name: specwit
+version: 1
+description: "Evidence-oriented delivery with explicit lifecycle boundaries"
+artifacts:
+  - id: proposal
+    generates: proposal.md
+    description: "Sources, scope, discovery and completion target"
+    template: proposal.md
+    instruction: |
+      Inspect the actual project and existing specs. Record source locations and versions, scope, non-goals, observed facts, assumptions, permissions and LOCAL/CI completion. Use unknown for missing facts. This schema is for behavioral changes; use a lighter schema for work without behavioral requirements.
+    requires: []
+  - id: specs
+    generates: specs/**/*.md
+    description: "Observable OpenSpec delta requirements"
+    template: spec.md
+    instruction: |
+      Create specs/<capability>/spec.md for each capability. Use Purpose for new capabilities (at least 50 characters), ADDED/MODIFIED/REMOVED/RENAMED Requirements, ### Requirement: ID - Name, SHALL/MUST and #### Scenario: with WHEN/THEN. Requirement IDs must be unique within the change. Copy the entire existing requirement for MODIFIED. For removals include Reason and Migration. Keep selectors and implementation details in design.
+    requires: ["proposal"]
+  - id: behavior-plan
+    generates: behavior-plan.md
+    description: "Coverage, counterexamples, test value and unknowns"
+    template: behavior-plan.md
+    instruction: |
+      Account for every source requirement as behavior, human judgment, unresolved, or explicitly excluded with a reason. Separate verification mode from readiness. For each behavior record observable outcomes, failing counterexamples, reusable checks, incremental evidence and cost. Missing automation is not HUMAN_ONLY. Leave confirmation PENDING without an applicable source.
+    requires: ["specs"]
+  - id: design
+    generates: design.md
+    description: "Implementation, project bindings and trust boundaries"
+    template: design.md
+    instruction: |
+      Read implementation, tests and configuration before proposing bindings. Use entry points and observables appropriate to the project type, fixtures, startup/readiness and observation windows. Separate observed facts from proposals, and mark missing bindings MISSING. Describe runner/reviewer permissions honestly. Design is required but may be short.
+    requires: ["behavior-plan"]
+  - id: verification-contract
+    generates: verification-contract.json
+    description: "Portable structured verification inputs"
+    template: verification-contract.json
+    instruction: |
+      Output pure JSON matching .governance/contracts/verification-contract.schema.json. Fill real source hashes, unique requirement/check/criterion IDs, resources, budgets, human items and cleanup ownership. Use schemaVersion 0.1 and Observe. The template is an incomplete draft; empty required arrays are not a valid runnable contract. Keep confirmation PENDING until a real source confirms this plan. Use specwit validate <change> to obtain the actual planDigest; never invent approval or hashes.
+    requires: ["behavior-plan", "design"]
+  - id: tasks
+    generates: tasks.md
+    description: "Implementation, evidence, delivery and explicit completion"
+    template: tasks.md
+    instruction: |
+      Use numbered checkbox tasks, each with completion evidence. Include confirmation, binding, baseline, implementation with useful tests, verification, human review, authorized delivery and explicit completion. Use specwit validate, verify, status and complete directly. Keep unsupported external work open as BLOCKED_EXTERNAL; never pre-check tasks or equate file existence with verification.
+    requires: ["verification-contract"]
+apply:
+  requires: [proposal, specs, behavior-plan, design, verification-contract, tasks]
+  tracks: tasks.md
+  instruction: |
+    Read .governance/workflow.md and all context files. Check applicable confirmation, project bindings and existing permissions. Run specwit validate <change> before execution, specwit verify <change> for checks, and specwit status <change> for current evidence. Import required independent reviews using the exact Run identifiers. Keep failures, unknowns, stale evidence and missing external completion capabilities unresolved. specwit complete only previews cleanup; archive is not Task finalization.

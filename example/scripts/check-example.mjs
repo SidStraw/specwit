@@ -11,7 +11,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const fixture = 'daily-check-in'
 const cli = process.env.OPENSPEC_BIN || 'openspec'
 const env = { ...process.env, OPENSPEC_TELEMETRY: '0', OPENSPEC_NO_UPDATE_CHECK: '1' }
-const workspace = mkdtempSync(join(tmpdir(), 'gov-openspec-example-'))
+const workspace = mkdtempSync(join(tmpdir(), 'specwit-openspec-example-'))
 let passed = 0
 
 function run(args, cwd = workspace) {

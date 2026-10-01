@@ -35,29 +35,29 @@ export function inspect(root: string, taskId: string): Inspection {
       const digest = fileDigest(root, ref)
       materials[ref] = digest
       if (plan) planFiles[ref] = digest
-      if (expected !== undefined && expected !== digest) add('DIGEST_MISMATCH', `檔案 digest 不符或未設定：${ref}`)
+      if (expected !== undefined && expected !== digest) add('DIGEST_MISMATCH', `File digest is missing or mismatched: ${ref}`)
     }
-    catch { add('MISSING_OR_UNSAFE_FILE', `檔案缺失、不支援或路徑不安全：${ref}`) }
+    catch { add('MISSING_OR_UNSAFE_FILE', `File is missing, unsupported, or unsafe: ${ref}`) }
   }
-  if (contract.taskId !== taskId) add('TASK_MISMATCH', 'contract.taskId 與 change 名稱不一致。')
-  if (contract.profile !== 'Observe') add('UNSUPPORTED_PROFILE', '此版本只支援 Observe。')
+  if (contract.taskId !== taskId) add('TASK_MISMATCH', 'contract.taskId does not match the change name.')
+  if (contract.profile !== 'Observe') add('UNSUPPORTED_PROFILE', 'This version supports Observe only.')
   for (const name of ['proposal.md', 'behavior-plan.md', 'design.md']) material(`${changeRef}/${name}`)
-  if (!hasFile(root, `${changeRef}/tasks.md`)) add('MISSING_TASKS', '缺少 tasks.md。')
+  if (!hasFile(root, `${changeRef}/tasks.md`)) add('MISSING_TASKS', 'Missing tasks.md.')
   const requirements: string[] = []
   try {
     const specs = filesUnder(root, `${changeRef}/specs`).filter(ref => ref.endsWith('.md'))
-    if (!specs.length) add('MISSING_SPECS', '沒有規格檔。')
+    if (!specs.length) add('MISSING_SPECS', 'No spec files found.')
     for (const ref of specs) {
       material(ref)
       for (const match of readText(root, ref).matchAll(/^### Requirement:\s*(.+)$/gm)) {
         const id = /^([A-Za-z][\w.-]*)\s+-\s+/.exec(match[1])?.[1]
         if (id) requirements.push(id)
-        else add('REQUIREMENT_ID_MISSING', `需求標題缺少穩定 ID（格式 ID - 名稱）：${ref}`)
+        else add('REQUIREMENT_ID_MISSING', `Requirement heading needs a stable ID (ID - Name): ${ref}`)
       }
     }
-    if (!requirements.length) add('NO_REQUIREMENTS', '沒有可對照的 requirement ID。')
+    if (!requirements.length) add('NO_REQUIREMENTS', 'No requirement IDs found.')
   }
-  catch { add('MISSING_SPECS', '無法讀取安全的 specs 目錄。') }
+  catch { add('MISSING_SPECS', 'Cannot read a safe specs directory.') }
   for (const [label, values] of [
     ['requirement', requirements],
     ['source', contract.sources.map(item => item.id)],
@@ -65,72 +65,72 @@ export function inspect(root: string, taskId: string): Inspection {
     ['criterion', contract.review.criteria.map(item => item.id)],
     ['human item', contract.humanItems.map(item => item.id)],
   ] as const) {
-    for (const id of duplicates([...values])) add('DUPLICATE_ID', `${label} ID 重複：${id}`)
+    for (const id of duplicates([...values])) add('DUPLICATE_ID', `Duplicate ${label} ID: ${id}`)
   }
   const coverage = new Set<string>()
   for (const check of contract.expectedChecks) {
     if (check.readiness !== 'READY') add('CHECK_NOT_READY', `${check.id}：${check.readiness}`)
     for (const id of check.requirementIds) {
-      if (!requirements.includes(id)) add('UNKNOWN_REQUIREMENT', `${check.id} 引用不存在的需求：${id}`)
+      if (!requirements.includes(id)) add('UNKNOWN_REQUIREMENT', `${check.id} references an unknown requirement: ${id}`)
       coverage.add(id)
     }
   }
   for (const item of contract.humanItems) {
     for (const id of item.requirementIds ?? []) {
-      if (!requirements.includes(id)) add('UNKNOWN_REQUIREMENT', `${item.id} 引用不存在的需求：${id}`)
+      if (!requirements.includes(id)) add('UNKNOWN_REQUIREMENT', `${item.id} references an unknown requirement: ${id}`)
       coverage.add(id)
     }
     if (item.status !== 'ACCEPTED' || !item.decisionRef)
-      humanPending.push({ code: 'HUMAN_ITEM_PENDING', message: `${item.id} 尚未有接受決策。` })
+      humanPending.push({ code: 'HUMAN_ITEM_PENDING', message: `${item.id} has no acceptance decision.` })
     if (item.decisionRef) material(item.decisionRef, undefined, false)
   }
   for (const id of requirements) {
-    if (!coverage.has(id)) add('UNCOVERED_REQUIREMENT', `需求沒有 check 或人工項目：${id}`)
+    if (!coverage.has(id)) add('UNCOVERED_REQUIREMENT', `Requirement has no check or human item: ${id}`)
   }
   for (const source of contract.sources) material(source.ref, source.sha256)
   for (const name of ['policy', 'binding', 'verifier'] as const) {
     const resource = contract[name]
-    if ('status' in resource && resource.status !== 'READY') add('RESOURCE_NOT_READY', `${name} 尚未 READY。`)
-    if (!resource.ref) add('MISSING_RESOURCE', `${name}.ref 未設定。`)
+    if ('status' in resource && resource.status !== 'READY') add('RESOURCE_NOT_READY', `${name} is not READY.`)
+    if (!resource.ref) add('MISSING_RESOURCE', `${name}.ref is missing.`)
     else material(resource.ref, resource.digest)
   }
   material(contract.review.schemaRef)
   try {
     new Ajv2020({ strict: true, allErrors: true }).compile(readJson(root, contract.review.schemaRef) as object)
   }
-  catch { add('INVALID_REVIEW_SCHEMA', 'review JSON Schema 無效或無法讀取。') }
-  if (contract.review.required && !contract.review.criteria.length) add('MISSING_CRITERIA', '必要 review 沒有 criteria。')
-  if (!contract.execution.maxAttempts || !contract.execution.timeoutSeconds) add('MISSING_LIMITS', '需設定 maxAttempts 與 timeoutSeconds。')
-  if (contract.confirmation.status !== 'CONFIRMED') add('CONFIRMATION_PENDING', '尚未記錄計畫確認。')
-  if (!contract.confirmation.sourceRef) add('MISSING_CONFIRMATION_SOURCE', '缺少可核對的確認來源。')
+  catch { add('INVALID_REVIEW_SCHEMA', 'Review JSON Schema is invalid or unreadable.') }
+  if (contract.review.required && !contract.review.criteria.length) add('MISSING_CRITERIA', 'Required review has no criteria.')
+  if (!contract.execution.maxAttempts || !contract.execution.timeoutSeconds) add('MISSING_LIMITS', 'Set maxAttempts and timeoutSeconds.')
+  if (contract.confirmation.status !== 'CONFIRMED') add('CONFIRMATION_PENDING', 'Plan confirmation has not been recorded.')
+  if (!contract.confirmation.sourceRef) add('MISSING_CONFIRMATION_SOURCE', 'Missing a verifiable confirmation source.')
   else material(contract.confirmation.sourceRef, undefined, false)
 
   let runner: Runner | null = null
-  const runnerRef = '.governance/runner.json'
+  const runnerRef = contract.execution.runnerRef ?? '.governance/runner.json'
   try {
     runner = parse(runnerSchema, readJson(root, runnerRef), runnerRef)
     material(runnerRef)
-    for (const id of duplicates(runner.checks.map(item => item.id))) add('DUPLICATE_RUNNER', `runner check 重複：${id}`)
+    for (const id of duplicates(runner.checks.map(item => item.id))) add('DUPLICATE_RUNNER', `Duplicate runner check: ${id}`)
     const ids = runner.checks.map(item => item.id)
     for (const check of contract.expectedChecks) {
-      if (!ids.includes(check.id)) add('MISSING_RUNNER', `${check.id} 沒有執行命令。`)
+      if (!ids.includes(check.id)) add('MISSING_RUNNER', `${check.id} has no runner command.`)
     }
     for (const id of ids) {
-      if (!contract.expectedChecks.some(check => check.id === id)) add('UNKNOWN_RUNNER', `未預期的 runner：${id}`)
+      if (!contract.expectedChecks.some(check => check.id === id)) add('UNKNOWN_RUNNER', `Unexpected runner check: ${id}`)
     }
     for (const rawRef of runner.inputs) {
       const ref = rawRef.replace(/\/$/, '')
       // Runtime and planning artifacts are captured separately and must not hash their own output.
       if (ref === '.governance' || ref.startsWith('.governance/runtime') || ref === 'openspec' || ref.startsWith('openspec/')) {
-        add('INVALID_INPUT_SCOPE', `inputs 只能列產品／fixture／runner 輸入，不能包含 runtime 或 openspec：${ref}`)
+        add('INVALID_INPUT_SCOPE', `Inputs must reference product, fixture, or check files, not runtime or openspec: ${ref}`)
         continue
       }
       const refs = filesUnder(root, ref)
-      if (!refs.length) add('EMPTY_INPUT', `輸入目錄沒有檔案：${ref}`)
+      if (!refs.length) add('EMPTY_INPUT', `Input directory is empty: ${ref}`)
       for (const file of refs) material(file, undefined, false)
     }
   }
-  catch { add('INVALID_RUNNER_CONFIG', '缺少或無法解析 .governance/runner.json／宣告的輸入。') }
+  catch { add('INVALID_RUNNER_CONFIG', `Cannot read or parse ${runnerRef} or its declared inputs.`) }
 
   const { planDigest: _digest, confirmation: _confirmation, execution, humanItems, ...plan } = contract
   // Confirmation/decision metadata is excluded to avoid circular approval digests.
@@ -138,12 +138,12 @@ export function inspect(root: string, taskId: string): Inspection {
     contract: {
       ...plan,
       humanItems: humanItems.map(({ status: _status, decisionRef: _ref, ...item }) => item),
-      execution: { maxAttempts: execution.maxAttempts, timeoutSeconds: execution.timeoutSeconds },
+      execution: { maxAttempts: execution.maxAttempts, timeoutSeconds: execution.timeoutSeconds, ...(execution.runnerRef ? { runnerRef: execution.runnerRef } : {}) },
     },
     files: planFiles,
   }))
-  if (contract.planDigest !== planDigest) add('PLAN_DIGEST_MISMATCH', 'planDigest 未設定或計畫已改變。')
-  if (contract.confirmation.confirmedPlanDigest !== planDigest) add('CONFIRMATION_STALE', '確認未綁定目前計畫。')
+  if (contract.planDigest !== planDigest) add('PLAN_DIGEST_MISMATCH', 'planDigest is missing or the plan has changed.')
+  if (contract.confirmation.confirmedPlanDigest !== planDigest) add('CONFIRMATION_STALE', 'Confirmation is not bound to the current plan.')
   material(contractRef, undefined, false)
   const candidateDigest = runner ? sha256(canonical({ planDigest, materials, nodeVersion: process.version })) : null
   return { contract, runner, blockers, humanPending, planDigest, candidateDigest, materials, changeRef, runtimeRef }

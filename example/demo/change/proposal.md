@@ -2,7 +2,7 @@
 
 ## Why
 
-提供可重跑的 OpenSpec＋gov CLI 示範，觀察規劃 ready、結果完整性與版本失效的差異。
+提供可重跑的 OpenSpec＋specwit CLI 示範，觀察規劃 ready、結果完整性與版本失效的差異。
 
 ## What Changes
 

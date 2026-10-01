@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "inputs": [
+    "REPLACE_WITH_PRODUCT_INPUTS",
+    "REPLACE_WITH_CHECK_SCRIPT"
+  ],
+  "checks": [
+    {
+      "id": "B01",
+      "command": [
+        "$NODE",
+        "REPLACE_WITH_CHECK_SCRIPT"
+      ]
+    }
+  ]
+}

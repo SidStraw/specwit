@@ -34,7 +34,7 @@ describe('contract and path boundaries', () => {
     expect(codes).toContain('UNCOVERED_REQUIREMENT')
     expect(codes).toContain('UNKNOWN_REQUIREMENT')
     put(root, `openspec/changes/${taskId}/verification-contract.json`, '{ invalid')
-    expect(() => check(root, taskId)).toThrow('無法解析 JSON')
+    expect(() => check(root, taskId)).toThrow('Cannot parse JSON')
   })
 
   it('rejects traversal, symlink references and symlink runtime writes', async () => {
@@ -49,7 +49,7 @@ describe('contract and path boundaries', () => {
     expect(check(clean, taskId).issues.map(item => item.code)).toContain('INVALID_RUNNER_CONFIG')
     const runtime = project()
     symlinkSync(join(runtime, 'test-files'), join(runtime, '.governance/runtime'))
-    await expect(verify(runtime, taskId)).rejects.toThrow('symlink')
+    await expect(verify(runtime, taskId)).rejects.toThrow('Symlink')
   })
 
   it('exposes a stable plan digest and invalidates changed plan confirmation', () => {
@@ -59,6 +59,22 @@ describe('contract and path boundaries', () => {
     put(root, `openspec/changes/${taskId}/behavior-plan.md`, '# A changed plan\n')
     expect(inspect(root, taskId).planDigest).not.toBe(prior)
     expect(check(root, taskId).issues.map(item => item.code)).toContain('CONFIRMATION_STALE')
+  })
+
+  it('supports a per-change runner without requiring a shared project runner', async () => {
+    const root = project()
+    const current = contract(root)
+    const runnerRef = `openspec/changes/${taskId}/runner.json`
+    put(root, runnerRef, { schemaVersion: 1, inputs: ['test-files'], checks: [{ id: 'B01', command: ['$NODE', 'test-files/runner.mjs'] }] })
+    current.execution.runnerRef = runnerRef
+    saveContract(root, current)
+    rmSync(join(root, '.governance/runner.json'))
+    confirmFixture(root)
+    expect((await verify(root, taskId)).state).toBe('PASS')
+    put(root, 'openspec/changes/another-task/runner.json', { checks: [] })
+    expect(status(root, taskId).state).toBe('PASS')
+    put(root, runnerRef, { invalid: true })
+    expect(check(root, taskId).issues.map(item => item.code)).toContain('INVALID_RUNNER_CONFIG')
   })
 })
 
@@ -89,7 +105,7 @@ describe('real subprocess verification', () => {
     const noisy = project("console.log('x'.repeat(300000))")
     expect((await verify(noisy, taskId)).run?.checks[0].reason).toBe('OUTPUT_LIMIT')
     const missing = project()
-    put(missing, '.governance/runner.json', { schemaVersion: 1, inputs: ['test-files'], checks: [{ id: 'B01', command: ['gov-nonexistent-test-binary'] }] })
+    put(missing, '.governance/runner.json', { schemaVersion: 1, inputs: ['test-files'], checks: [{ id: 'B01', command: ['specwit-nonexistent-test-binary'] }] })
     confirmFixture(missing)
     expect((await verify(missing, taskId)).run?.checks[0].reason).toBe('SPAWN_ERROR')
   })
@@ -128,7 +144,7 @@ describe('real subprocess verification', () => {
     await expect(verify(root, taskId)).rejects.toThrow('maxAttempts')
     const locked = project()
     put(locked, `.governance/runtime/${taskId}/.lock`, 'existing')
-    await expect(verify(locked, taskId)).rejects.toThrow('鎖')
+    await expect(verify(locked, taskId)).rejects.toThrow('locked')
     const cancelled = project('setInterval(() => {}, 100)')
     const controller = new AbortController()
     const pending = verify(cancelled, taskId, { signal: controller.signal })
@@ -167,7 +183,7 @@ describe('external review and explicit completion', () => {
     expect(invalid.state).toBe('BLOCKED')
     expect(invalid.run?.reviewAttempts).toHaveLength(3)
     put(root, 'test-files/subject.txt', 'edited')
-    await expect(verify(root, taskId, { runId: run.runId, reviewRef: 'review.json' })).rejects.toThrow('版本仍有效')
+    await expect(verify(root, taskId, { runId: run.runId, reviewRef: 'review.json' })).rejects.toThrow('version is still current')
   })
 
   it('does not convert unknown or duplicate review assessments into a pass', async () => {
@@ -202,11 +218,11 @@ describe('external review and explicit completion', () => {
 describe('argument parsing', () => {
   it('keeps task IDs as strings and rejects typo/duplicate/extra flags', () => {
     expect(argumentsFor(['check', '123', '--root', 'a b', '--json']).taskId).toBe('123')
-    expect(() => argumentsFor(['check', taskId, '--force'])).toThrow('未知參數')
-    expect(() => argumentsFor(['verify', taskId, '--root'])).toThrow('需要值')
-    expect(() => argumentsFor(['check', taskId, '--root', 'a', '--root', 'b'])).toThrow('不可重複')
-    expect(() => argumentsFor(['verify', taskId, '--review', 'review.json'])).toThrow('同時指定')
-    expect(() => argumentsFor(['complete', taskId, '--execute'])).toThrow('未知參數')
-    expect(() => argumentsFor(['check', taskId, 'extra'])).toThrow('用法')
+    expect(() => argumentsFor(['check', taskId, '--force'])).toThrow('Unknown option')
+    expect(() => argumentsFor(['verify', taskId, '--root'])).toThrow('requires a value')
+    expect(() => argumentsFor(['check', taskId, '--root', 'a', '--root', 'b'])).toThrow('Duplicate option')
+    expect(() => argumentsFor(['verify', taskId, '--review', 'review.json'])).toThrow('both --review and --run')
+    expect(() => argumentsFor(['complete', taskId, '--execute'])).toThrow('Unknown option')
+    expect(() => argumentsFor(['check', taskId, 'extra'])).toThrow('Usage')
   })
 })

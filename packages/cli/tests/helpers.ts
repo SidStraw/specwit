@@ -6,7 +6,7 @@ import type { Contract, Run } from '../src/model'
 import { inspect } from '../src/contract'
 import { fileDigest } from '../src/files'
 
-export const example = resolve(dirname(fileURLToPath(import.meta.url)), '../../../example')
+export const example = resolve(dirname(fileURLToPath(import.meta.url)), 'fixtures/legacy-project')
 export const taskId = 'daily-check-in'
 
 export function put(root: string, path: string, value: unknown): void {
@@ -33,11 +33,11 @@ export function confirmFixture(root: string): void {
 export const successfulRunner = `
 import { readFileSync } from 'node:fs'
 const value = readFileSync('test-files/subject.txt', 'utf8').trim()
-console.log(JSON.stringify({schemaVersion:1,checkId:process.env.GOV_CHECK_ID,verdict:value === 'correct' ? 'PASS' : 'FAIL',observations:['subject=' + value]}))
+console.log(JSON.stringify({schemaVersion:1,checkId:process.env.SPECWIT_CHECK_ID,verdict:value === 'correct' ? 'PASS' : 'FAIL',observations:['subject=' + value]}))
 `
 
 export function fixture(runner = successfulRunner): string {
-  const root = mkdtempSync(join(tmpdir(), 'gov-cli-test-'))
+  const root = mkdtempSync(join(tmpdir(), 'specwit-cli-test-'))
   for (const name of ['openspec', 'fixtures', 'contracts']) cpSync(join(example, name), join(root, name), { recursive: true })
   put(root, 'test-files/subject.txt', 'correct')
   put(root, 'test-files/runner.mjs', runner)

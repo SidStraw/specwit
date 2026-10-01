@@ -121,7 +121,7 @@ GitHub 接受的 required check 狀態可能包含 `skipped`／`neutral`，因�
 
 建議實作順序：Core／CLI 的一次驗證 → 乾淨 reviewer＋結構化結果 → OpenCode Plugin／runtime＋本機 Task 完成清理 → CI 重驗及明確完成 → risk observer。API 與目錄布局見 [規格 9.5](specification.md#opencode)，仍是未實作提案。
 
-常駐 `govd`、provider queue 與 autonomous worker 延後；外部 audit／evidence storage 不列入目前範圍。不可因沿用原稿 roadmap，就重新導入已取消的永久保存需求。
+常駐 `specwitd`、provider queue 與 autonomous worker 延後；外部 audit／evidence storage 不列入目前範圍。不可因沿用原稿 roadmap，就重新導入已取消的永久保存需求。
 
 <a id="f5"></a>
 ## F5. Prototype、量測方法與停止條件
@@ -176,9 +176,9 @@ Governance 人工總時間 = intake 確認 + binding 修正 + 例外處理 + 最
 
 ### E7：完成、CI 接手與清理
 
-依 [AC18～AC22](specification.md#s14) 驗證本機完成、CI 延後完成、失敗保留、清理中斷重試、晚到 worker、另一個 Task 同時存在、Git 清理產生新 SHA，以及本機離線後重新同步。確認完成後沒有 gov-owned 任務資料殘留，也沒有誤刪交付成果或共用規則。
+依 [AC18～AC22](specification.md#s14) 驗證本機完成、CI 延後完成、失敗保留、清理中斷重試、晚到 worker、另一個 Task 同時存在、Git 清理產生新 SHA，以及本機離線後重新同步。確認完成後沒有 SpecWit-owned 任務資料殘留，也沒有誤刪交付成果或共用規則。
 
-尤其需先實驗 D16 的 finalization 流程，再承諾 CI 生命週期完整：任務契約能用於驗證最終版本，清理變更確實交付，且本機不以任意檔案缺失當完成證明。不新增遠端 evidence store 或永久 gov 收據。
+尤其需先實驗 D16 的 finalization 流程，再承諾 CI 生命週期完整：任務契約能用於驗證最終版本，清理變更確實交付，且本機不以任意檔案缺失當完成證明。不新增遠端 evidence store 或永久 SpecWit 收據。
 
 ### Go／No-go
 
@@ -216,7 +216,7 @@ Governance 人工總時間 = intake 確認 + binding 修正 + 例外處理 + 最
 | D13 | 程式化驗證與測試價值 | CONFIRMED（原則） | 能程式化就程式化，避免為測而測 | 契約／反例／增量證據／成本四項選擇規則為提案 |
 | D14 | 明確完成的位置 | CONFIRMED | 本機任務在本機完成；需 CI 就保留到 CI 明確完成後清除 | finalization 入口與可信身分 |
 | D15 | Task／Run／session 分離 | PROPOSED | 一個 Task 跨多 Run；runtime 可共用，reviewer 每次新 session | 狀態名稱、併行與 crash recovery |
-| D16 | CI 與 Git／本機清理 | OPEN | 分開 runner 清理、Git 清理變更、本機同步後清理；不留永久 gov 完成紀錄 | 誰提交清理、在哪個分支、如何驗最終 SHA、如何確認本機可清理 |
+| D16 | CI 與 Git／本機清理 | OPEN | 分開 runner 清理、Git 清理變更、本機同步後清理；不留永久 SpecWit 完成紀錄 | 誰提交清理、在哪個分支、如何驗最終 SHA、如何確認本機可清理 |
 | D17 | 未完成任務的膨脹控制 | OPEN | 有限 attempts／資源，取消或過期不能視為成功 | 容量、逾期、明確丟棄與未交付成果保護 |
 
 目前最需要收斂的是 D02、D16、D17；D04／D10／D13／D14 不再列為「全部待確認」。本機驗證切片可先推進，CI 清理完整性要等 D16 的實驗結果。
@@ -227,7 +227,7 @@ Governance 人工總時間 = intake 確認 + binding 修正 + 例外處理 + 最
 - 「可自動驗證」泛論 → 必須程式化驗證，新增測試另檢查契約與價值。
 - 非結構化 semantic findings → 乾淨 reviewer 的結構化評估，Zod＋語意引用檢查；不依賴 Jev。
 - Run 結束含糊地代表完成 → Task／Run／session 分開，依本機／CI 的明確完成入口結束。
-- 長／中／短期 retention、CI artifacts、外部 audit roadmap → 專案內保存，完成即清除，不保留永久 gov 歷史。
+- 長／中／短期 retention、CI artifacts、外部 audit roadmap → 專案內保存，完成即清除，不保留永久 SpecWit 歷史。
 - 清理視為單一步驟 → 明示 Git 歷史、最終 SHA、本機副本與復原尚需設計。
 
 <a id="f7"></a>

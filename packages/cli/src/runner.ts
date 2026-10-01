@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process'
 import type { CheckResult } from './model'
 import { checkOutputSchema } from './model'
+import { checkEnvironment } from './compat'
 
 export function executeCheck(root: string, taskId: string, runId: string, check: { id: string, command: string[] }, timeoutSeconds: number, signal?: AbortSignal): Promise<CheckResult> {
   return new Promise((resolve) => {
@@ -14,7 +15,7 @@ export function executeCheck(root: string, taskId: string, runId: string, check:
       cwd: root,
       shell: false,
       detached: process.platform !== 'win32',
-      env: { ...process.env, GOV_TASK_ID: taskId, GOV_RUN_ID: runId, GOV_CHECK_ID: check.id },
+      env: checkEnvironment(taskId, runId, check.id),
       stdio: ['ignore', 'pipe', 'pipe'],
     })
     function kill(): void {

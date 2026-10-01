@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Example reviewer response (semantic validation is external)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "assessments"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "assessments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterionId", "verdict", "confidence", "rationale", "evidenceIds", "limitations"],
+        "properties": {
+          "criterionId": { "type": "string", "minLength": 1 },
+          "verdict": { "enum": ["meets", "does_not_meet", "unknown"] },
+          "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+          "rationale": { "type": "string", "minLength": 1 },
+          "evidenceIds": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "verdict": { "const": "unknown" } } },
+            "then": { "properties": { "confidence": { "type": "null" } } },
+            "else": {
+              "properties": {
+                "confidence": { "type": "number" },
+                "evidenceIds": { "type": "array", "minItems": 1 }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

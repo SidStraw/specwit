@@ -29,7 +29,7 @@
 - 不承諾自然語言規格的完整形式證明、不保證消除所有人工 diff review、不把 AI reviewer 的意見當成正確性證明。
 - 不管理 Jira workflow、Figma lifecycle、QA case 平台或 PM dashboard；企業 RBAC、多團隊調度、合規認證與 Kubernetes／Kafka 不在首版範圍。
 - 首個 Harness 為 OpenCode，Core 保留 adapter 邊界；不以同時支援其他 Harness 作為第一版條件。
-- Gov 不建立遠端 evidence store、不以 CI artifacts 保存任務歷史，也不在完成後另留長期摘要或收據。專案透過既有 Git／CI 流程交付必要輸入；這與另外建置資料儲存服務不同。
+- SpecWit 不建立遠端 evidence store、不以 CI artifacts 保存任務歷史，也不在完成後另留長期摘要或收據。專案透過既有 Git／CI 流程交付必要輸入；這與另外建置資料儲存服務不同。
 
 ### 1.3 保留的原則
 
@@ -85,7 +85,7 @@ UI 建議使用「指定情境已驗證」取代 `PROVED`。如保留原名，�
 
 信任模型至少防止 Agent 或 Candidate 誤改、刪除或偽造治理證據；不宣稱能抵抗主機 root、惡意治理管理員、未知 OS／browser 漏洞或所有測試投機行為。評估刻意針對測試作弊時，應增加威脅模型與成本，不把有限 probes 宣稱為全面證明。
 
-**檔案放在 workspace 外不會自動安全。** 若 Agent 的 shell 與 `govd` 共用無限制的使用者權限，它仍可能讀寫外部路徑、呼叫治理 socket 或讀取憑證。強制模式必須以 sandbox 權限、不同身分、隔離 volume／行程建立實際邊界，且不得把控制器 socket、Docker socket、Signer 或 publisher credentials 掛入 Candidate。
+**檔案放在 workspace 外不會自動安全。** 若 Agent 的 shell 與 `specwitd` 共用無限制的使用者權限，它仍可能讀寫外部路徑、呼叫治理 socket 或讀取憑證。強制模式必須以 sandbox 權限、不同身分、隔離 volume／行程建立實際邊界，且不得把控制器 socket、Docker socket、Signer 或 publisher credentials 掛入 Candidate。
 
 本版資料保存在專案內；應以 mount／sandbox 權限保護治理目錄及控制端，不因檔案同屬 repository 就讓 Writer 可寫。一般工作樹或同使用者程序分離只提供邏輯隔離，無實際權限限制時不得宣稱 Controlled。
 
@@ -167,7 +167,7 @@ ACTIVE → 本機驗證或 WAITING_FOR_CI → READY_TO_COMPLETE
 
 - `session.idle`、模型說「完成」、Run FINISHED、驗證 PASS 或 CI job 結束，都不是 Task 的完成指令。
 - 完成入口由 Controller 驗證權限、task／candidate／plan 身分、必要檢查、人工處置與交付狀態。Writer 可以提出完成請求，不能自行批准或刪除證據來製造完成。
-- 清理前停止持有該任務資料的 worker，拒絕遲到結果；只清理 gov 擁有且明確列入清單的資源。不得刪掉交付程式碼、正式測試、使用者未交付的修改、其他 Task 資料或使用者既有 OpenCode 對話。
+- 清理前停止持有該任務資料的 worker，拒絕遲到結果；只清理 SpecWit 擁有且明確列入清單的資源。不得刪掉交付程式碼、正式測試、使用者未交付的修改、其他 Task 資料或使用者既有 OpenCode 對話。
 - 已完成 Task 不再維持可恢復的對話、授權或永久 run history。後續工作建立新 Task，使用專案共用規則與正式測試，不能沿用舊接受決策。
 - 未完成、取消、逾期 Task 的容量限制及明確丟棄流程待定；不得只因超時就算成功，也不能默默刪除唯一交付資料。詳 [D17](feasibility-and-decisions.md#f6)。
 
@@ -418,11 +418,11 @@ ELIGIBLE = 所有必要 acceptance checks 為 CURRENT + PASS
 若需求是 output 跟隨 config，使用不同有效值、邊界值與預先定義的變形關係檢查；保存 seed 與 input digest，讓測試可重跑。通過有限組輸入只能證明這些情境，不代表不存在 hardcode。
 
 <a id="s9"></a>
-## 9. Harness、Plugin、MCP 與 govd
+## 9. Harness、Plugin、MCP 與 specwitd
 
 ### 9.1 分工
 
-Skill 提供模型合作方式；MCP 提供 `gov_status`、`gov_get_findings`、`gov_request_expansion`、`gov_submit_candidate`；Hook／Plugin 收集事件、對支援的路徑作出決策。這些都不能讓 Agent 自行授權、寫入 final verdict 或取得簽章能力。
+Skill 提供模型合作方式；MCP 提供 `specwit_status`、`specwit_get_findings`、`specwit_request_expansion`、`specwit_submit_candidate`；Hook／Plugin 收集事件、對支援的路徑作出決策。這些都不能讓 Agent 自行授權、寫入 final verdict 或取得簽章能力。
 
 Webhook 僅 trigger：驗證來源、去重、防重播，再由 Controller 查 actor、Task 與 policy。事件 body 不直接變成 shell 命令或 action grant。
 
@@ -444,9 +444,9 @@ Abort receipt 應說明已發送取消、主行程狀態、子行程是否確定
 
 各 Harness 的已查核能力見 [可行性文件 F2](feasibility-and-decisions.md#f2)。Core 保持跨 Harness，第一版先完成 OpenCode adapter 的契約測試。
 
-### 9.3 govd 的導入時機與 API 邊界
+### 9.3 specwitd 的導入時機與 API 邊界
 
-初期以 `gov` CLI＋Core library＋外部 runner 建立垂直切片，再接 OpenCode Plugin 與按需啟動的 local runtime。Runtime 程序可由同專案共用，Task 的授權、plan、Candidate 與 Evidence 各自獨立；程序退出後從專案內資料恢復未完成 Task，不依賴常駐 daemon。
+初期以 `specwit` CLI＋Core library＋外部 runner 建立垂直切片，再接 OpenCode Plugin 與按需啟動的 local runtime。Runtime 程序可由同專案共用，Task 的授權、plan、Candidate 與 Evidence 各自獨立；程序退出後從專案內資料恢復未完成 Task，不依賴常駐 daemon。
 
 若採用 daemon：Local socket／HTTP 僅是 transport，仍需驗證呼叫身分與 run-scoped capability。Agent 憑證只能讀狀態、送提案；人類決策走獨立、已驗證身分的 channel。不能以同一個 token 同時提供 `submit_candidate`、`approve` 與 `sign_pass`。
 
@@ -460,11 +460,11 @@ Abort receipt 應說明已發送取消、主行程狀態、子行程是否確定
 ```text
 OpenCode Writer + 輕量 Plugin
           ↓ events／task-scoped tools
-Gov Core／CLI + 按需啟動的 Local Runtime
+SpecWit Core／CLI + 按需啟動的 Local Runtime
           ├─ Task／Run／授權／Candidate／完成與清理
           ├─ 程式化 verifier worker → Gate A
           └─ 獨立 OpenCode reviewer worker → 結構化評估 → Zod＋引用檢查
-所有 gov 持久資料與暫存資料置於專案內；CI 重用 Core 建立自己的 Run
+所有 SpecWit 持久資料與暫存資料置於專案內；CI 重用 Core 建立自己的 Run
 ```
 
 | 元件 | 責任與限制 |
@@ -475,11 +475,11 @@ Gov Core／CLI + 按需啟動的 Local Runtime
 | Reviewer worker | 每次新 session、獨立受控設定與工作目錄；唯讀 rubric／Candidate／Evidence，不 fork Writer 對話 |
 | Project storage | 未完成任務的可攜契約與各 Run 暫存資料分開；必要時使用專案內 SQLite，不增加遠端 store |
 
-工具先提供 `gov_status`、`gov_get_findings`、`gov_submit_candidate`、`gov_request_expansion`；名稱為設計提案。Submit 由 Controller 凍結 snapshot；工具事件只標記可能有變更，不能每次 after／idle 就直接評估或完成。同一 Candidate digest 的重複事件去重，reviewer 事件不得再觸發自身 review。
+工具先提供 `specwit_status`、`specwit_get_findings`、`specwit_submit_candidate`、`specwit_request_expansion`；名稱為設計提案。Submit 由 Controller 凍結 snapshot；工具事件只標記可能有變更，不能每次 after／idle 就直接評估或完成。同一 Candidate digest 的重複事件去重，reviewer 事件不得再觸發自身 review。
 
 OpenCode 官方文件提供 plugins、session API 與 JSON Schema structured output；這些是接入入口，版本相容與錯誤語意仍須實測。[Plugins](https://opencode.ai/docs/plugins/)、[SDK](https://opencode.ai/docs/sdk/)
 
-OpenCode 會合併多層設定，因此建立新 session 不等於不載入 repository 設定。Reviewer 必須明確控制 config、plugins／skills、規則、工具及資料目錄；gov 建立的 reviewer storage 應置於專案內隔離區，能力不足時不得宣稱乾淨環境。使用者既有 Writer session 由使用者管理，不因 gov Task 完成而自動刪除。[Config](https://opencode.ai/docs/config/)
+OpenCode 會合併多層設定，因此建立新 session 不等於不載入 repository 設定。Reviewer 必須明確控制 config、plugins／skills、規則、工具及資料目錄；SpecWit 建立的 reviewer storage 應置於專案內隔離區，能力不足時不得宣稱乾淨環境。使用者既有 Writer session 由使用者管理，不因 SpecWit Task 完成而自動刪除。[Config](https://opencode.ai/docs/config/)
 
 多 Task 同時執行時使用各自 snapshot／工作區；只有不同 task ID 不足以防止同一工作目錄互相污染。第一版可先單一 active Run；併行是後續能力。
 
@@ -505,7 +505,7 @@ CI workflow 分開「驗證」與「明確完成」步驟。只有必要 checks�
 
 | 清理目標 | 必須處理的事項 |
 |---|---|
-| 該次 CI checkout／worker | 停止 gov-owned worker，清除任務 runtime 資料；保留交付程式與正式測試 |
+| 該次 CI checkout／worker | 停止 SpecWit-owned worker，清除任務 runtime 資料；保留交付程式與正式測試 |
 | 已納入 Git 的任務契約 | 產生並依授權交付清理變更；刪 runner 檔案不會改 repository。清理不重寫 Git 歷史 |
 | 本機保留的相同 Task | 透過專案同步後明確核對完成狀態，再清理本機副本；CI 不能直接清除離線電腦 |
 
@@ -513,7 +513,7 @@ Git 清理的執行身分、分支／PR 流程，以及本機如何辨識已完�
 
 如果清理已追蹤檔案會改變交付 SHA／tree，不能把舊 PASS 直接套到新版本。完成流程必須以受保護的暫存契約驗證實際最終版本，或對清理後版本重新執行必要驗證，再發布對應版本結果；所需契約不得先刪到無法執行。CI 完成與清理端到端機制通過 AC20～AC22 前，不宣稱已支援。
 
-Gov 不上傳任務 logs／截圖／manifest 到 CI artifact store。CI 服務自身的 job log、check、PR 與 Git 歷史仍由既有平台管理；「gov 清除任務資料」不代表清除這些平台紀錄，輸出時避免傾印任務敏感資料。
+SpecWit 不上傳任務 logs／截圖／manifest 到 CI artifact store。CI 服務自身的 job log、check、PR 與 Git 歷史仍由既有平台管理；「SpecWit 清除任務資料」不代表清除這些平台紀錄，輸出時避免傾印任務敏感資料。
 
 ### 10.2 多 Candidate 與整合
 
@@ -546,7 +546,7 @@ Gov 不上傳任務 logs／截圖／manifest 到 CI artifact store。CI 服務�
 <a id="task-storage"></a>
 ### 11.3 專案內儲存，明確完成後清除
 
-此節取代 v0.2 的長／中／短期 retention 與 CI artifacts 方案。Gov 任務資料全部保存在專案內；完成後不保留額外摘要、收據、tombstone 或 run history。以下路徑為提案：
+此節取代 v0.2 的長／中／短期 retention 與 CI artifacts 方案。SpecWit 任務資料全部保存在專案內；完成後不保留額外摘要、收據、tombstone 或 run history。以下路徑為提案：
 
 ```text
 .governance/
@@ -560,7 +560,7 @@ Gov 不上傳任務 logs／截圖／manifest 到 CI artifact store。CI 服務�
 | 資料 | 任務期間 | 明確完成時 |
 |---|---|---|
 | Task 契約、plan／授權、Candidate、manifest、Gate、人工處置、audit | 按 task ID 關聯，保留必要版本以供驗證與復原 | 清除；不另建長期索引 |
-| stdout、截圖、trace、模型結果、gov-owned reviewer session | 專案內 runtime；只收集必要資料並遮蔽敏感資訊 | 清除檔案、DB rows、關聯快取及 gov-owned session |
+| stdout、截圖、trace、模型結果、SpecWit-owned reviewer session | 專案內 runtime；只收集必要資料並遮蔽敏感資訊 | 清除檔案、DB rows、關聯快取及 SpecWit-owned session |
 | 暫存 snapshot／工作區／程序 | 明確記錄資源歸屬與仍在使用的 Run | 停止後清除；未交付的使用者成果不得連帶刪除 |
 | 共用 policy、schema、binding、verifier、正式程式與測試 | 隨專案版本維護 | 保留，不屬於任務暫存資料 |
 
@@ -568,7 +568,7 @@ CI 只接收可重建驗證所需的精簡契約，不把每次 Run 紀錄或大
 
 清理必須可重試、限制在明確 task-owned 範圍，不能依任意模型輸出的路徑遞迴刪除。共享資源需先確認無其他 Run 使用；SQLite／快取清理需涵蓋關聯資料，具體格式不強制。最小 cleanup 狀態只存到清理成功，不能以復原為理由留下永久完成紀錄。
 
-完成後只保有交付成果與共用專案規則，不再承諾 gov 可重播當時對話、提供完整歷史 Evidence 或恢復舊授權。「清除」指目前檔案與 gov-managed 資料的移除，不承諾磁碟鑑識抹除、Git history 改寫或第三方平台資料刪除。
+完成後只保有交付成果與共用專案規則，不再承諾 SpecWit 可重播當時對話、提供完整歷史 Evidence 或恢復舊授權。「清除」指目前檔案與 SpecWit-managed 資料的移除，不承諾磁碟鑑識抹除、Git history 改寫或第三方平台資料刪除。
 
 資料保存在專案內不表示使用遠端模型時完全不外送內容；選用的模型仍需接收必要 rubric／材料，依既有資料政策處理。這不構成額外遠端 evidence storage。
 
@@ -655,10 +655,10 @@ Gate B 在 P0／P1 提供結構化參考，必要的人工語意 review 仍保�
 | AC16 | 模型回覆格式錯誤、漏／重複 criterion、引用不存在或其他 Candidate 的 evidence | 拒絕接受該評估；有限修正後仍失敗則回報未知，不產生 PASS |
 | AC17 | 模型高信心認定符合，但 Gate A FAIL；或 reviewer 缺少必要觀察材料 | 不覆寫 FAIL；缺材料回 unknown／confidence null，格式正確不等於判斷正確 |
 | AC18 | Writer session idle、Run FINISHED、一般 CI 驗證通過 | Task 未被明確完成時不刪除；CI Task 不由本機提前結束 |
-| AC19 | 本機任務明確完成；清理途中程序中斷後重試 | 交付成果與共用設定保留；gov 任務資料全部清除，重試不誤刪其他 Task 或使用者對話 |
+| AC19 | 本機任務明確完成；清理途中程序中斷後重試 | 交付成果與共用設定保留；SpecWit 任務資料全部清除，重試不誤刪其他 Task 或使用者對話 |
 | AC20 | CI checkout 只有專案資料，沒有本機 session／SQLite／raw Evidence | 從已確認契約重建驗證並使用新的 run ID；缺必要輸入阻擋，不採信本機 PASS |
 | AC21 | CI 完成時任務契約已納入 Git，清理會產生新 SHA | 驗證／發布結果對應最終交付版本；清理變更確實交付，不能只刪 runner 檔案或沿用舊 PASS |
-| AC22 | CI 已完成但本機離線；之後同步遇到契約消失或本機未交付修改 | 核對完成來源後才清理；保護本機成果，不把任意檔案缺失當完成，不保留永久 gov 收據 |
+| AC22 | CI 已完成但本機離線；之後同步遇到契約消失或本機未交付修改 | 核對完成來源後才清理；保護本機成果，不把任意檔案缺失當完成，不保留永久 SpecWit 收據 |
 | AC23 | Candidate 含 plugins／AGENTS，或 reviewer 產生 plugin events | Reviewer 不載入未允許設定、不繼承 Writer 對話、不遞迴觸發 review；只使用允許的唯讀工具 |
 
 以上為未來實作的驗收要求，本次文件整理沒有執行這些測試。Prototype 方法、數值門檻提案與停止條件見 [可行性文件 F5](feasibility-and-decisions.md#f5)。

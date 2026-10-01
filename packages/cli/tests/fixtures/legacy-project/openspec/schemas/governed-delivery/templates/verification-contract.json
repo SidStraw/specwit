@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "0.1-example",
+  "taskId": "REPLACE_WITH_CHANGE_NAME",
+  "completionTarget": "LOCAL",
+  "profile": "Observe",
+  "planRevision": 1,
+  "planDigest": null,
+  "sources": [],
+  "confirmation": {
+    "status": "PENDING",
+    "sourceRef": null,
+    "confirmedPlanDigest": null
+  },
+  "policy": { "ref": null, "digest": null },
+  "binding": { "status": "MISSING", "ref": null, "digest": null },
+  "verifier": { "status": "MISSING", "ref": null, "digest": null },
+  "expectedChecks": [],
+  "review": {
+    "required": true,
+    "schemaRef": "contracts/review-result.schema.json",
+    "criteria": []
+  },
+  "humanItems": [],
+  "execution": {
+    "candidate": null,
+    "runId": null,
+    "maxAttempts": null,
+    "timeoutSeconds": null
+  },
+  "cleanup": {
+    "ownedChange": null,
+    "ownedRuntime": null,
+    "preserve": ["openspec/specs/", "openspec/schemas/", "openspec/config.yaml", "contracts/", "src/", "tests/"],
+    "finalizer": "NOT_IMPLEMENTED"
+  }
+}

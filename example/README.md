@@ -1,28 +1,28 @@
 # OpenSpec 治理流程示例
 
+通用工具入口已整理至 [SpecWit npm 套件](../packages/cli/README.zh-TW.md)。此目錄保留原 `governed-delivery` 教學 change，供對照與故障注入示範；不作為其他專案的安裝來源。
+
 這個目錄已實際執行 `openspec init`，並將預設 schema fork 成 `governed-delivery`。需求整理、行為計畫、Project Binding、驗證契約及任務追蹤交由 OpenSpec；可信驗收與完成清理仍是外部缺口。
 
-**本示例包含流程配置、已打包的 gov CLI 與可重跑的小型模型示範。** 原 `daily-check-in` 教學 change 的人工確認仍為 PENDING，九項執行工作皆未完成；另以獨立的模型展示實際 PASS／FAIL，不代表真實產品或受保護治理引擎已完成。
+**本示例包含流程配置、已打包的 SpecWit CLI 與可重跑的小型模型示範。** 原 `daily-check-in` 教學 change 的人工確認仍為 PENDING，九項執行工作皆未完成；另以獨立的模型展示實際 PASS／FAIL，不代表真實產品或受保護治理引擎已完成。
 
 ## 直接看搭配效果
 
 CLI 已輸出到本目錄的 `dist/`，可直接執行，不用先安裝 npm 套件：
 
 ```sh
-cd /path/to/project/example
-node dist/gov.mjs check daily-check-in --json
-# 上一行預期 BLOCKED、exit 2；接著跑完整示範：
+cd /path/to/specwit/example
 node scripts/demo.mjs
 ```
 
 需要 Node.js 22.18 以上及 OpenSpec 1.14.0。若從 Git checkout 尚無 dist，從上層執行 `pnpm install --frozen-lockfile` 後，以 `pnpm example:demo` 建置並執行。
 
-示範會實際跑：OpenSpec ready 但 gov 阻擋 → 正常 checks PASS 但缺 review → 拒絕錯誤 evidence → Observe PASS → 移除 pending guard → 舊結果 STALE → 新 Run FAIL → 修正重驗 → 完成清理仍阻擋。
+示範會實際跑：OpenSpec ready 但 SpecWit 阻擋 → 正常 checks PASS 但缺 review → 拒絕錯誤 evidence → Observe PASS → 移除 pending guard → 舊結果 STALE → 新 Run FAIL → 修正重驗 → 完成清理仍阻擋。
 
 先看 [最新實際結果](demo-output/RESULTS.md)，再看 [搭配方式與手動操作](demo/README.md)。每次執行都留下新的可編輯專案與逐步 JSON；確認與 reviewer 回覆為明確標示的 synthetic fixture。
 
-- [直接執行的 gov.mjs](dist/gov.mjs)
-- [可安裝的壓縮套件](dist/gov-cli-0.1.0.tgz)
+- [直接執行的 specwit.mjs](dist/specwit.mjs)
+- [可安裝的壓縮套件](dist/sidtw-specwit-0.3.0.tgz)
 - [Runner 設定](demo/governance/runner.json)、[Binding](demo/governance/binding.json)、[實際模型](demo/src/check-in.mjs)、[檢查程式](demo/checks/check-in.mjs)
 
 ## 快速閱讀
@@ -30,12 +30,12 @@ node scripts/demo.mjs
 | 檔案 | 用途 |
 |---|---|
 | [GAPS.md](GAPS.md) | 已實測的限制、需外部補強的能力與建議順序 |
-| [gov CLI](../packages/cli/README.md) | 已實作的 Observe 檢查、runner、review 匯入與打包操作 |
+| [SpecWit CLI](../packages/cli/README.md) | 已實作的 Observe 檢查、runner、review 匯入與打包操作 |
 | [WORKFLOW.md](WORKFLOW.md) | 從規劃到 LOCAL／CI 完成的操作方式與責任界線 |
 | [config.yaml](openspec/config.yaml) | 專案背景、各產物規則、apply／archive 指引 |
 | [schema.yaml](openspec/schemas/governed-delivery/schema.yaml) | 六種產物、範本與相依關係 |
 | [daily-check-in](openspec/changes/daily-check-in/proposal.md) | 完整但未核准實作的教學 change |
-| [review-result.schema.json](contracts/review-result.schema.json) | reviewer 回覆格式；gov 接收端已載入驗證 |
+| [review-result.schema.json](contracts/review-result.schema.json) | reviewer 回覆格式；SpecWit 接收端已載入驗證 |
 | [check-example.mjs](scripts/check-example.mjs) | 可重跑的 CLI 整合檢查與限制探測 |
 
 ## 初始化紀錄
@@ -76,7 +76,7 @@ OpenSpec 的相依圖只涵蓋前六項**規劃產物**。驗證結果與 finali
 OpenSpec 探測需求：Node.js 22 以上、可從 PATH 執行的 OpenSpec 1.14.0。此探測腳本沒有另外安裝 npm 依賴。`OPENSPEC_BIN` 可指定另一個 OpenSpec 執行檔；不接受含參數的 shell 字串。
 
 ```sh
-cd /path/to/project/example
+cd /path/to/specwit/example
 openspec --version
 openspec schema validate governed-delivery
 openspec status --change daily-check-in
@@ -92,20 +92,36 @@ node scripts/check-example.mjs
 
 上述 PASS 只表示示例配置與所記錄的 OpenSpec 行為符合預期。未執行產品測試、模型 review、權限隔離、CI 或完成清理。
 
-另已加入 TypeScript 的 `gov` CLI，可從儲存庫根目錄建置並檢查此示例（需 Node.js 22.18 以上及 pnpm）：
+另已加入 TypeScript 的 `specwit` CLI，可從儲存庫根目錄建置並檢查此示例（需 Node.js 22.18 以上及 pnpm）：
 
 ```sh
 pnpm install --frozen-lockfile
 pnpm cli:pack
-node example/dist/gov.mjs check daily-check-in --root example --json
+node example/dist/specwit.mjs --help
+# 不修改教學 change 的完整示範（含暫存副本 init）：
+node example/scripts/demo.mjs
 ```
 
-預期為 `BLOCKED`、exit code 2：人確認、binding/verifier、runner 與版本摘要仍未準備。`gov verify` 也會在前置檢查阻擋，不會建立原教學 change 的 runtime。CLI 的測試使用暫存 fixture；可操作示範則將資料保留在 demo-output，兩者都不將確認或結果寫回原教學 change。[完整指令與接入方式](../packages/cli/README.md)
+直接操作專案前先完成 `specwit init`。示範會在獨立副本執行初始化，再取得 `BLOCKED`、exit code 2：人確認、binding/verifier、runner 與版本摘要仍未準備。`specwit verify` 也會在前置檢查阻擋，不會建立原教學 change 的 runtime。CLI 的測試使用暫存 fixture；可操作示範則將資料保留在 demo-output，兩者都不將確認或結果寫回原教學 change。[完整指令與接入方式](../packages/cli/README.md)
 
 ## 用於真實任務
 
-在此專案的 OpenCode 中，已安裝的規劃入口是 `/opsx-propose`，實作入口是 `/opsx-apply`。`gov` 是另行建置／安裝的輔助 CLI，沒有自動安裝新的 OpenCode workflow；`gov complete` 目前只預覽清理範圍。
+在此專案的 OpenCode 中，已安裝的規劃入口是 `/opsx-propose`，實作入口是 `/opsx-apply`。`specwit` 是另行建置／安裝的輔助 CLI，沒有自動安裝新的 OpenCode workflow；`specwit complete` 目前只預覽清理範圍。
 
-若移入真實 repo，先以相同版本執行 `openspec init --tools opencode`，再合併本示例的 config、schema、WORKFLOW 與回覆契約；保留該專案原有規則。不要把教學 change 當成已核准的產品需求。既有 changes 會保留原本 schema，需要逐一評估，不能只改預設值就視為已遷移。
+若用於真實 repo，先完成 `openspec init`，安裝 SpecWit npm 套件，再執行 `specwit init`；英文為預設，繁中使用 `specwit init --language zh-TW`。工具會安裝通用 `specwit` schema 與必要提示詞，合併設定並保留原規則，不必複製此教學目錄。不要把教學 change 當成已核准的產品需求。既有 changes 會保留原本 schema，需要逐一評估，不能只改預設值就視為已遷移。
+
+發布後的安裝與操作方式如下；尚未發布時使用上面的本機 npm 壓縮包：
+
+```sh
+npm install -g @sidtw/specwit
+# 先在目標專案完成 openspec init
+specwit init
+specwit init --language zh-TW
+specwit validate <change>
+specwit verify <change>
+specwit status <change>
+```
+
+既有安裝的 schema、設定與資料相容性見[遷移說明](../packages/cli/MIGRATION.zh-TW.md)。
 
 目前最小下一步是用已實作的接收端接上一個真實專案的 binding 與 runner，再補可信執行邊界，量測相對於「OpenSpec＋既有測試／CI＋reviewer」的增量價值。[補強順序與驗收條件](GAPS.md)

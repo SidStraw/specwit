@@ -1,8 +1,8 @@
 # 流程與操作契約
 
-此文件與 config/schema 一起提供流程指引。OpenSpec CLI 不會執行這裡描述的外部能力；另有 [gov CLI](../packages/cli/README.md) 提供 Observe 模式的前置檢查、runner、結果接收與狀態判斷。受保護驗收與 finalizer 仍未實作，實際缺口見 [GAPS.md](GAPS.md)。
+此文件與 config/schema 一起提供流程指引。OpenSpec CLI 不會執行這裡描述的外部能力；另有 [SpecWit CLI](../packages/cli/README.md) 提供 Observe 模式的前置檢查、runner、結果接收與狀態判斷。受保護驗收與 finalizer 仍未實作，實際缺口見 [GAPS.md](GAPS.md)。
 
-在這份 example 中，已打包的入口是 `node dist/gov.mjs`；下文的 `gov` 可直接換成此入口。先執行 `node scripts/demo.mjs` 可看到 [完整搭配示範](demo/README.md) 與 [本機實際結果](demo-output/RESULTS.md)。OpenCode 的 apply guidance 也會提示使用此入口，但仍由 Agent 呼叫，不會因 OpenSpec ready 而自動執行。
+在這份 example 中，已打包的入口是 `node dist/specwit.mjs`；下文的 `specwit` 可直接換成此入口。先執行 `node scripts/demo.mjs` 可看到 [完整搭配示範](demo/README.md) 與 [本機實際結果](demo-output/RESULTS.md)。OpenCode 的 apply guidance 也會提示使用此入口，但仍由 Agent 呼叫，不會因 OpenSpec ready 而自動執行。
 
 ## 1. 規劃與來源
 
@@ -19,7 +19,7 @@
 
 `openspec validate --strict` 檢查 OpenSpec 文件結構；自訂 verification-contract JSON 的內容與業務語意需要另外驗證。`contracts/review-result.schema.json` 是 reviewer 回覆的 JSON Schema，與 OpenSpec 的工作流程 schema 是不同事物。
 
-安裝 gov 後，以 `gov check <change> --json` 驗證契約、資源與 ID 覆蓋。輸出的 READY 只表示 runner 前置條件符合 Observe 要求，不建立可信人工核准；人工待辦另列於 humanPending。
+安裝 specwit 後，以 `specwit validate <change> --json` 驗證契約、資源與 ID 覆蓋。輸出的 READY 只表示 runner 前置條件符合 Observe 要求，不建立可信人工核准；人工待辦另列於 humanPending。
 
 ## 2. 人確認與實作前檢查
 
@@ -37,7 +37,7 @@
 
 ## 4. Candidate、Gate A 與 Gate B
 
-以下描述目標中的受保護驗收。現在可用 `gov verify <change>` 執行宣告 checks，再用 `gov verify <change> --run <uuid> --review review.json` 匯入 reviewer envelope；`gov status <change>` 重新檢查版本與結果。CLI 已接部分資料檢查，但下列隔離、snapshot 與 reviewer 啟動仍需外部接入：
+以下描述目標中的受保護驗收。現在可用 `specwit verify <change>` 執行宣告 checks，再用 `specwit verify <change> --run <uuid> --review review.json` 匯入 reviewer envelope；`specwit status <change>` 重新檢查版本與結果。CLI 已接部分資料檢查，但下列隔離、snapshot 與 reviewer 啟動仍需外部接入：
 
 1. 停止／隔離 Writer 對待驗版本的寫入，擷取實際輸入快照與 digest。只記 commit SHA 未必包含 dirty files、fixture 與其他材料。
 2. 以固定 plan、binding、policy、verifier 對 Candidate 執行 Gate A；核對預期與實際 checks、attempts、完整結果及版本。
@@ -61,7 +61,7 @@
 }
 ```
 
-預期接收條件為「必要檢查全部 CURRENT＋PASS、人工項目與 findings 已處置、交付版本一致」。缺結果、INCONCLUSIVE、STALE 或 INVALID 不得自動接受。gov 的 Observe 判斷已檢查必要結果與人工待辦，仍未驗證身分、受保護來源及交付版本，因此不是受信任 gate。
+預期接收條件為「必要檢查全部 CURRENT＋PASS、人工項目與 findings 已處置、交付版本一致」。缺結果、INCONCLUSIVE、STALE 或 INVALID 不得自動接受。SpecWit 的 Observe 判斷已檢查必要結果與人工待辦，仍未驗證身分、受保護來源及交付版本，因此不是受信任 gate。
 
 修復或改變計畫、binding、verifier、policy、base 後需重判有效性；建立新 Candidate／attempt，不覆寫先前失敗。OpenSpec 本身不管理這種失效。
 
@@ -71,7 +71,7 @@ Task、Run、OpenCode session 與 runtime process 是不同物件。一次 Run P
 
 | 位置 | 流程 | 目前支援程度 |
 |---|---|---|
-| LOCAL | 核對必要驗證、人工處置、授權交付與明確完成要求，再清理 | gov complete 只預覽，finalizer 未實作 |
+| LOCAL | 核對必要驗證、人工處置、授權交付與明確完成要求，再清理 | specwit complete 只預覽，finalizer 未實作 |
 | CI | 保留可重建契約；同 Task、新 Run 重驗實際 head／integration tree；另一步明確完成 | 只有契約草稿，workflow／publisher 未接入 |
 
 交付沿用已有授權，沒有額外授權時不得推導 push、PR、merge 或 deploy。若正式 specs 需要納入交付，可以在授權範圍使用獨立的 `/opsx-sync`；這會改變檔案，仍需把更新納入最終版本核對，不能拿同步前的 PASS 直接套用。
@@ -88,7 +88,7 @@ openspec/changes/<task-id>/                         任務規劃與驗證契約
 
 真實 Task 完成後，外部 finalizer 應驗證資源擁有者與明確允許清單，停止相關 workers，再移除 task-owned change、runtime 與自行建立的 reviewer 資料。不能依模型輸出的任意路徑刪檔。交付程式、正式測試、共用規則、其他任務與使用者既有 session 要保留。
 
-目標 finalizer 在清理失敗時應保持 COMPLETING 並可重試；未完成或未知時保留必要資料。只有通過適用 Profile 的驗收與完成核對，才可啟動清理。此範例的 `gov complete <change> --dry-run` 只提供預覽，維持 BLOCKED_EXTERNAL，不實際刪除示例。
+目標 finalizer 在清理失敗時應保持 COMPLETING 並可重試；未完成或未知時保留必要資料。只有通過適用 Profile 的驗收與完成核對，才可啟動清理。此範例的 `specwit complete <change> --dry-run` 只提供預覽，維持 BLOCKED_EXTERNAL，不實際刪除示例。
 
 OpenSpec archive 會保留整份 change，也可能在未完成任務時經確認或 `--yes` 繼續；它不是 finalizer。`operations.archive.guidance` 只能提醒差異，不能取代內建流程。
 

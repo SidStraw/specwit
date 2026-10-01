@@ -1,6 +1,24 @@
-# 工程 AI 執行治理框架｜方向總覽
+# SpecWit｜規格的見證者
 
-> 討論稿 v0.3｜規格日期：2026-09-30。2026-10-01 已加入 [OpenSpec 客製化示例](example/README.md) 與 [TypeScript gov CLI](packages/cli/README.md)：提供 Observe 前置檢查、驗證執行、review 接收與版本判斷；受保護治理核心、真實專案驗收及完成清理尚未完成。已確認方向與待定細節分列於第 6 節。
+SpecWit 由 SpecWitness 縮略而來，意為「規格的見證者」：對照規格觀察實際行為、提供驗證證據，並明確標示尚未確認的部分。
+
+SpecWit, short for SpecWitness, connects specifications with observed behavior and verification evidence, while making remaining unknowns explicit.
+
+```sh
+npm install -g @sidtw/specwit
+# 在目標專案先完成 openspec init
+specwit init
+specwit init --language zh-TW
+specwit validate <change>
+specwit verify <change>
+specwit status <change>
+```
+
+CLI 操作與限制見 [English README](packages/cli/README.md)／[繁體中文](packages/cli/README.zh-TW.md)；升級既有專案見[遷移說明](packages/cli/MIGRATION.zh-TW.md)。npm 發布由維護者自行處理。
+
+專案目錄分工、可提交檔案、開發檢查與敏感資料掃描方式見 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
+> 討論稿 v0.3｜規格日期：2026-09-30。2026-10-01 已加入 [OpenSpec 客製化示例](example/README.md) 與 [SpecWit npm 工具](packages/cli/README.zh-TW.md)：以 `specwit init` 綁定已初始化的 OpenSpec 專案，預設英文、可選繁體中文，再使用 `specwit validate`／`verify`／`status`。受保護治理核心、真實專案驗收及完成清理尚未完成。已確認方向與待定細節分列於第 6 節。
 
 **建議繼續驗證這個方向，先證明「獨立驗收證據能降低人工 review 成本」，再擴充跨 Harness 的即時治理。** 原稿的控制、觀察、驗證與稽核機制在限定範圍內可實作；最不確定的是需求轉換的準確度、專案接入成本，以及總體上是否真的省下工程師時間。
 
@@ -17,7 +35,7 @@
 | 首個工具情境 | OpenCode Plugin＋Core／CLI＋按需 runtime＋獨立 verifier／reviewer | OpenCode 優先已確認；具體架構與版本相容待實作 |
 | 驗證方式 | 能程式化的條件就程式化；重用既有檢查，新增測試要有契約、反例及增量價值 | 不用測試數量或模型信心代替有效證據 |
 | 模型評估 | 乾淨 reviewer 回傳結構化理由、證據、限制與自報信心；以 Zod 接收驗證為提案 | 不綁 Jev；格式有效不代表判斷正確 |
-| 資料位置 | Gov 資料放專案內；共用規則與任務暫存分開 | 不另建遠端 evidence store 或永久收據 |
+| 資料位置 | SpecWit 資料放專案內；共用規則與任務暫存分開 | 不另建遠端 evidence store 或永久收據 |
 | 最大未知 | 需求與畫面／API 的 binding 能否低成本建立，並找到 Writer 自己沒發現的錯誤 | 必須用 Prototype 回答 |
 | 完成的定義 | 必要檢查、人工處置與交付條件成立後，明確結束 Task 並清除相關資料 | 本機完成或 CI 完成；Run 結束／PASS 不自動結束 Task |
 
@@ -68,7 +86,7 @@ flowchart LR
 3. **分開需求分類、執行進度、驗證結論與接受決策。** `HUMAN_ONLY` 不是測試結果，`INCONCLUSIVE` 也不是已完成。
 4. **將跨 Harness 能力改成有覆蓋範圍的契約。** 不用單一 `preToolInterception: true` 推論所有 shell、網路與遠端工具都受控。
 5. **證據綁定實際交付版本。** 修復、追加 commit、更新 base 或合併其他 Candidate 後，要重新判斷證據是否有效。
-6. **降低首版範圍並量測總成本。** 先 OpenCode 與有效驗證；多 Harness、常駐 `govd`、複雜 queue 延後。遠端 evidence storage 與永久稽核不列入目前範圍。
+6. **降低首版範圍並量測總成本。** 先 OpenCode 與有效驗證；多 Harness、常駐 `specwitd`、複雜 queue 延後。遠端 evidence storage 與永久稽核不列入目前範圍。
 
 ## 5. 建議的第一個驗證切片
 
@@ -93,7 +111,7 @@ flowchart LR
 | D16：誰提交 Git 清理、如何驗最終 SHA、如何清本機副本 | 待設計與實驗，不能只刪 runner 檔案 | [CI 完成流程](docs/specification.md#ci-completion) |
 | D17：未完成／取消／逾期任務的容量與丟棄規則 | 待決定，避免未完成任務持續累積 | [成本與限制](docs/specification.md#s12) |
 
-完整治理框架的 Task／Run／session 與 Plugin API 仍是提案；目前 [gov CLI 0.1.0](packages/cli/README.md) 已實作並測試有限的 Observe 切片，與完整規格的差距見 [GAPS](example/GAPS.md)。Git 刪檔不會移除歷史；完成後也不保留 gov 的永久 audit。其餘信任邊界、權責及驗證門檻見 [完整決策表](docs/feasibility-and-decisions.md#f6)。
+完整治理框架的 Task／Run／session 與 Plugin API 仍是提案；目前 [SpecWit CLI 0.3.0](packages/cli/README.zh-TW.md) 已提供 npm 套件、雙語初始化與有限的 Observe 切片，與完整規格的差距見 [GAPS](example/GAPS.md)。Git 刪檔不會移除歷史；完成後也不保留 SpecWit 的永久 audit。其餘信任邊界、權責及驗證門檻見 [完整決策表](docs/feasibility-and-decisions.md#f6)。
 
 ## 7. 完整閱讀入口
 

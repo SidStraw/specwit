@@ -1,0 +1,13 @@
+{
+  "context": "SpecWit 規劃產物使用台灣繁體中文，保留 OpenSpec 標題、SHALL／MUST、ID 與程式碼。先讀 .governance/workflow.md。每條來源需求對應行為、人工檢視、待澄清或明確排除。分開規劃、實作、觀察結果、接受與 Task 完成。相關輸入改變後重新核對確認與證據。SpecWit 目前只提供 Observe 結果，不提供隔離、身分驗證或 finalizer。",
+  "operations": {
+    "apply": [
+      "SpecWit: 先讀 .governance/workflow.md，執行 specwit validate <change> 後再用 specwit verify <change>；處理真實缺口，不虛構確認或證據。",
+      "SpecWit: 修改後使用 specwit status <change>。需要獨立 review 時依 .governance/prompts/review.md 執行；沿用仍有效的授權。",
+      "SpecWit: completionTarget 為 CI 時保留契約供 CI 新 Run 使用。specwit complete <change> --dry-run 只預覽清理，缺少明確完成能力時維持 BLOCKED_EXTERNAL。"
+    ],
+    "archive": [
+      "SpecWit: Archive 會保留 change 檔案，不是驗證、Task 明確完成或任務資料清理；說明差異並依專案完成政策處理。"
+    ]
+  }
+}
