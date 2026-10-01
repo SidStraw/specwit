@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "target": "Node.js check-in model, no browser or real service",
+  "module": "src/check-in.mjs",
+  "factory": "createCheckIn",
+  "action": "activate",
+  "observation": "state and sendRequest call count",
+  "fixture": "manually resolved Promise; reward values 7 and 23",
+  "checks": { "R01": "B01", "R02": "B02" }
+}

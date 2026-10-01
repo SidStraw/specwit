@@ -2,6 +2,8 @@
 
 此文件與 config/schema 一起提供流程指引。OpenSpec CLI 不會執行這裡描述的外部能力；另有 [gov CLI](../packages/cli/README.md) 提供 Observe 模式的前置檢查、runner、結果接收與狀態判斷。受保護驗收與 finalizer 仍未實作，實際缺口見 [GAPS.md](GAPS.md)。
 
+在這份 example 中，已打包的入口是 `node dist/gov.mjs`；下文的 `gov` 可直接換成此入口。先執行 `node scripts/demo.mjs` 可看到 [完整搭配示範](demo/README.md) 與 [本機實際結果](demo-output/RESULTS.md)。OpenCode 的 apply guidance 也會提示使用此入口，但仍由 Agent 呼叫，不會因 OpenSpec ready 而自動執行。
+
 ## 1. 規劃與來源
 
 在 OpenCode 使用 `/opsx-propose` 提出真實任務，或由 Agent 依 `openspec status` / `openspec instructions` 逐一產生規劃文件。

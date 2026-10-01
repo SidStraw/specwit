@@ -13,12 +13,12 @@ pnpm install --frozen-lockfile
 pnpm cli:typecheck
 pnpm cli:test
 pnpm cli:pack
-node packages/cli/dist/gov.mjs check daily-check-in --root example --json
+node example/dist/gov.mjs check daily-check-in --root example --json
 ```
 
 `cli:test` 先打包再執行測試，包含將單一執行檔複製到暫存目錄的獨立執行檢查。最後一行預期回傳 `BLOCKED`、exit code 2，列出教學 change 的真實缺口。這不是安裝失敗。
 
-壓縮套件輸出到 `artifacts/gov-cli-0.1.0.tgz`。在要使用的專案安裝該檔，再透過專案的 `pnpm exec gov` 使用，不必全域安裝：
+壓縮套件輸出到 `example/dist/gov-cli-0.1.0.tgz`，並將可直接執行的 `gov.mjs` 與第三方授權文件放入同一目錄。`pnpm example:demo` 可建置並執行 [OpenSpec 搭配示範](../../example/demo/README.md)，查看實際結果與故障注入效果。在要使用的專案安裝壓縮套件，再透過專案的 `pnpm exec gov` 使用，不必全域安裝：
 
 ```sh
 pnpm add -D /absolute/path/to/gov-cli-0.1.0.tgz

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "profile": "Observe",
+  "purpose": "synthetic integration demonstration",
+  "requiredChecks": ["B01", "B02"],
+  "reviewRequired": true,
+  "trustedAcceptance": false,
+  "finalization": "preview-only"
+}

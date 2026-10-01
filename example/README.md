@@ -2,7 +2,28 @@
 
 這個目錄已實際執行 `openspec init`，並將預設 schema fork 成 `governed-delivery`。需求整理、行為計畫、Project Binding、驗證契約及任務追蹤交由 OpenSpec；可信驗收與完成清理仍是外部缺口。
 
-**本示例是可載入、可檢查的流程配置，不是已實作的治理引擎。** 教學 change 的規劃文件齊全，但人工確認仍為 PENDING，九項執行工作皆未完成，也沒有產品程式或假 PASS。
+**本示例包含流程配置、已打包的 gov CLI 與可重跑的小型模型示範。** 原 `daily-check-in` 教學 change 的人工確認仍為 PENDING，九項執行工作皆未完成；另以獨立的模型展示實際 PASS／FAIL，不代表真實產品或受保護治理引擎已完成。
+
+## 直接看搭配效果
+
+CLI 已輸出到本目錄的 `dist/`，可直接執行，不用先安裝 npm 套件：
+
+```sh
+cd /path/to/project/example
+node dist/gov.mjs check daily-check-in --json
+# 上一行預期 BLOCKED、exit 2；接著跑完整示範：
+node scripts/demo.mjs
+```
+
+需要 Node.js 22.18 以上及 OpenSpec 1.14.0。若從 Git checkout 尚無 dist，從上層執行 `pnpm install --frozen-lockfile` 後，以 `pnpm example:demo` 建置並執行。
+
+示範會實際跑：OpenSpec ready 但 gov 阻擋 → 正常 checks PASS 但缺 review → 拒絕錯誤 evidence → Observe PASS → 移除 pending guard → 舊結果 STALE → 新 Run FAIL → 修正重驗 → 完成清理仍阻擋。
+
+先看 [最新實際結果](demo-output/RESULTS.md)，再看 [搭配方式與手動操作](demo/README.md)。每次執行都留下新的可編輯專案與逐步 JSON；確認與 reviewer 回覆為明確標示的 synthetic fixture。
+
+- [直接執行的 gov.mjs](dist/gov.mjs)
+- [可安裝的壓縮套件](dist/gov-cli-0.1.0.tgz)
+- [Runner 設定](demo/governance/runner.json)、[Binding](demo/governance/binding.json)、[實際模型](demo/src/check-in.mjs)、[檢查程式](demo/checks/check-in.mjs)
 
 ## 快速閱讀
 
@@ -75,11 +96,11 @@ node scripts/check-example.mjs
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm cli:build
-node packages/cli/dist/gov.mjs check daily-check-in --root example --json
+pnpm cli:pack
+node example/dist/gov.mjs check daily-check-in --root example --json
 ```
 
-預期為 `BLOCKED`、exit code 2：人確認、binding/verifier、runner 與版本摘要仍未準備。`gov verify` 也會在前置檢查阻擋，不會建立此示例的 runtime。CLI 的成功／失敗測試使用暫存的合成 fixture，不將其人工確認或產品結果寫回教學 change。[完整指令與接入方式](../packages/cli/README.md)
+預期為 `BLOCKED`、exit code 2：人確認、binding/verifier、runner 與版本摘要仍未準備。`gov verify` 也會在前置檢查阻擋，不會建立原教學 change 的 runtime。CLI 的測試使用暫存 fixture；可操作示範則將資料保留在 demo-output，兩者都不將確認或結果寫回原教學 change。[完整指令與接入方式](../packages/cli/README.md)
 
 ## 用於真實任務
 

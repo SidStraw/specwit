@@ -1,2 +1,4 @@
 .governance/runtime/
 node_modules/
+dist/
+demo-output/

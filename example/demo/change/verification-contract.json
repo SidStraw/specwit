@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "0.1",
+  "taskId": "check-in-cli-demo",
+  "completionTarget": "LOCAL",
+  "profile": "Observe",
+  "planRevision": 1,
+  "planDigest": null,
+  "sources": [{ "id": "SRC-DEMO", "ref": "request.md", "version": "demo-v1", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
+  "confirmation": { "status": "PENDING", "sourceRef": null, "confirmedPlanDigest": null },
+  "policy": { "ref": ".governance/policy.json", "digest": null },
+  "binding": { "status": "READY", "ref": ".governance/binding.json", "digest": null },
+  "verifier": { "status": "READY", "ref": "checks/check-in.mjs", "digest": null },
+  "expectedChecks": [
+    { "id": "B01", "requirementIds": ["R01"], "required": true, "mode": "PROGRAMMATIC", "readiness": "READY" },
+    { "id": "B02", "requirementIds": ["R02"], "required": true, "mode": "PROGRAMMATIC", "readiness": "READY" }
+  ],
+  "review": {
+    "required": true,
+    "schemaRef": "contracts/review-result.schema.json",
+    "criteria": [{ "id": "demo-evidence", "description": "僅核對示範回覆對目前 Run 的 check 證據引用；不是模型評估" }]
+  },
+  "humanItems": [],
+  "execution": { "candidate": null, "runId": null, "maxAttempts": 10, "timeoutSeconds": 5 },
+  "cleanup": {
+    "ownedChange": "openspec/changes/check-in-cli-demo/",
+    "ownedRuntime": ".governance/runtime/check-in-cli-demo/",
+    "preserve": ["openspec/schemas/", "openspec/config.yaml", "contracts/", "src/", "checks/"],
+    "finalizer": "NOT_IMPLEMENTED"
+  }
+}

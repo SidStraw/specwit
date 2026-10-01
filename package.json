@@ -12,7 +12,8 @@
     "cli:build": "pnpm --filter @gov/cli build",
     "cli:test": "pnpm --filter @gov/cli test",
     "cli:typecheck": "pnpm --filter @gov/cli typecheck",
-    "cli:pack": "pnpm --filter @gov/cli pack --out artifacts/gov-cli-0.1.0.tgz"
+    "cli:pack": "pnpm --filter @gov/cli pack --out example/dist/gov-cli-0.1.0.tgz && node scripts/package-example.mjs",
+    "example:demo": "pnpm cli:pack && node example/scripts/demo.mjs"
   },
   "engines": { "node": ">=22" }
 }

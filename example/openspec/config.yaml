@@ -35,7 +35,7 @@ operations:
   apply:
     guidance:
       - 開始前讀 WORKFLOW.md，核對 verification-contract.json 的確認來源、適用版本、binding 及既有授權。
-      - 若已安裝 gov，先執行 gov check <change>，補齊前置條件後用 verify/status 取得 Observe 結果；READY/PASS 不代表受信任核准或 Task 完成。
+      - 若本目錄有 dist/gov.mjs，以 node dist/gov.mjs check <change> 執行前置檢查；若已安裝 gov，亦可用 gov check <change>。補齊條件後用同一入口的 verify/status 取得 Observe 結果；READY/PASS 不代表受信任核准或 Task 完成。
       - 不要求重複核准已有且仍有效的授權；缺少有效確認或必要外部能力時回報具體缺口。
       - 依既有測試加有價值的增量驗證執行；不得自行改通過標準或將失敗與未知改寫成 PASS。
       - Candidate 修正後建立新 attempt，保留先前失敗；reviewer 回覆依 contracts/review-result.schema.json 接收，格式與證據對應另由外部接收端驗證。

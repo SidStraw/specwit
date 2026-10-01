@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "inputs": ["src", "checks"],
+  "checks": [
+    { "id": "B01", "command": ["$NODE", "checks/check-in.mjs"] },
+    { "id": "B02", "command": ["$NODE", "checks/check-in.mjs"] }
+  ]
+}
