@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "0.1-example",
+  "taskId": "daily-check-in",
+  "completionTarget": "LOCAL",
+  "profile": "Observe",
+  "planRevision": 1,
+  "planDigest": null,
+  "sources": [
+    {
+      "id": "SRC-01",
+      "ref": "fixtures/daily-check-in-request.md",
+      "version": "fixture-v1",
+      "sha256": "31b5d16f17bbfd1fe03b40dce31981ecdfca5e2176cc96870f2e51a0688a0ddc"
+    }
+  ],
+  "confirmation": {
+    "status": "PENDING",
+    "sourceRef": null,
+    "confirmedPlanDigest": null
+  },
+  "policy": {
+    "ref": null,
+    "digest": null
+  },
+  "binding": {
+    "status": "MISSING",
+    "ref": null,
+    "digest": null
+  },
+  "verifier": {
+    "status": "MISSING",
+    "ref": null,
+    "digest": null
+  },
+  "expectedChecks": [
+    {
+      "id": "B01",
+      "requirementIds": [
+        "R01"
+      ],
+      "required": true,
+      "mode": "PROGRAMMATIC",
+      "readiness": "MISSING_BINDING"
+    },
+    {
+      "id": "B02",
+      "requirementIds": [
+        "R02"
+      ],
+      "required": true,
+      "mode": "PROGRAMMATIC",
+      "readiness": "MISSING_BINDING"
+    },
+    {
+      "id": "B03",
+      "requirementIds": [
+        "R03"
+      ],
+      "required": true,
+      "mode": "PROGRAMMATIC",
+      "readiness": "MISSING_BINDING"
+    },
+    {
+      "id": "B04",
+      "requirementIds": [
+        "R04"
+      ],
+      "required": true,
+      "mode": "PROGRAMMATIC",
+      "readiness": "MISSING_BINDING"
+    },
+    {
+      "id": "B05",
+      "requirementIds": [
+        "R05"
+      ],
+      "required": true,
+      "mode": "PROGRAMMATIC",
+      "readiness": "MISSING_BINDING"
+    },
+    {
+      "id": "B06",
+      "requirementIds": [
+        "R06"
+      ],
+      "required": true,
+      "mode": "PROGRAMMATIC",
+      "readiness": "MISSING_BINDING"
+    }
+  ],
+  "review": {
+    "required": true,
+    "schemaRef": "contracts/review-result.schema.json",
+    "criteria": [
+      {
+        "id": "requirement-coverage",
+        "description": "需求是否遺漏、誤解或被擅自縮減"
+      },
+      {
+        "id": "implementation-risk",
+        "description": "架構、hardcode 與測試盲點，必須附可核對證據"
+      }
+    ]
+  },
+  "humanItems": [
+    {
+      "id": "H01",
+      "description": "確認成功回饋是否清楚",
+      "status": "PENDING",
+      "decisionRef": null
+    }
+  ],
+  "execution": {
+    "candidate": null,
+    "runId": null,
+    "maxAttempts": null,
+    "timeoutSeconds": null
+  },
+  "cleanup": {
+    "ownedChange": "openspec/changes/daily-check-in/",
+    "ownedRuntime": ".governance/runtime/daily-check-in/",
+    "preserve": [
+      "openspec/specs/",
+      "openspec/schemas/",
+      "openspec/config.yaml",
+      "contracts/",
+      "src/",
+      "tests/"
+    ],
+    "finalizer": "NOT_IMPLEMENTED"
+  }
+}

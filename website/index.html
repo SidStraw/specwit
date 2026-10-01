@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#193e32">
+  <meta name="description" content="GOV 工程 AI 執行治理框架：理解受控執行、獨立驗證與可追溯證據，透過互動架構與模擬情境探索需求如何走向可信交付。">
+  <meta property="og:title" content="GOV — 讓 AI 的成果，有跡可驗。">
+  <meta property="og:description" content="工程 AI 執行治理框架。從需求理解、受控執行，到獨立驗證與可追溯證據。">
+  <title>GOV — 讓 AI 的成果，有跡可驗。</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要內容</a>
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="GOV 首頁"><img src="./favicon.svg" width="32" height="32" alt=""><span>gov<span class="brand-dot">.</span></span><span class="brand-caption">Engineering AI<br>Governance Framework</span></a>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="navigation">選單 <span aria-hidden="true">＋</span></button>
+    <nav id="navigation" aria-label="主要導覽">
+      <a href="#principles">設計理念</a><a href="#architecture">系統架構</a><a href="#workflow">運作流程</a><a href="#guide">深入閱讀</a><a href="#playground" class="nav-cta">互動體驗 <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="status-dot"></span> ENGINEERING AI, WITH ACCOUNTABILITY</div>
+        <h1 id="hero-title">讓 AI 的成果，<br><span>有跡可驗。</span></h1>
+        <p class="hero-description">從「它說完成了」，到「我們知道驗證了什麼」。<br>在 Coding Agent 與交付之間，建立受控執行、<br class="desktop-break">獨立驗證與可追溯的證據。</p>
+        <div class="hero-actions"><a class="button primary" href="#playground">親手體驗治理流程 <span aria-hidden="true">↗</span></a><a class="text-link" href="#architecture">探索架構 <span aria-hidden="true">↓</span></a></div>
+        <p class="release-note"><span>v0.2</span> 架構提案 · 開放探索，持續驗證</p>
+      </div>
+      <div class="hero-visual" role="img" aria-label="需求經過治理核心與獨立驗證，產生綁定指定版本的證據；人工決策控制交付。">
+        <div class="visual-topline"><span>THE TRUST LAYER</span><span>FIG. 01</span></div>
+        <div class="orbital orbital-one"></div><div class="orbital orbital-two"></div>
+        <div class="diagram-axis"></div>
+        <div class="signal-card signal-intent"><span class="signal-icon">⌘</span><div><small>01 / INTENT</small><strong>需求與契約</strong></div><span class="signal-tag">確認</span></div>
+        <div class="gov-core"><span class="core-cross cross-one">+</span><span class="core-cross cross-two">+</span><small>CONTROL · OBSERVE · VERIFY</small><strong>gov<span>.</span></strong><span class="core-caption">執行治理核心</span><div class="core-light"></div></div>
+        <div class="signal-card signal-evidence"><span class="signal-icon check-icon">✓</span><div><small>02 / EVIDENCE</small><strong>可追溯的驗收證據</strong></div><span class="signal-tag">版本綁定</span></div>
+        <div class="orbit-label orbit-left"><span></span> CODING AGENT</div><div class="orbit-label orbit-right"><span></span> INDEPENDENT VERIFIER</div>
+        <div class="visual-bottomline"><span>每個結論，都有來源。</span><span class="mini-dots">● ● ●</span></div>
+      </div>
+    </section>
+    <div class="foundation-strip"><div class="wrap"><span>沿用你的工程工作流</span><div>Task / Spec <i>→</i> Coding Harness <i>→</i> <strong>GOV 治理層</strong> <i>→</i> CI / Human Review</div><span class="strip-note">保留工具，補上信任。</span></div></div>
+
+    <section id="principles" class="section wrap">
+      <div class="section-heading"><div><p class="eyebrow">01 — PHILOSOPHY</p><h2>產出越快，<br>越需要知道為什麼可信。</h2></div><p class="section-intro">程式能執行，不代表需求被完整理解。<br>GOV 將「寫出成果」與「判定成果」分開，<br>讓工程師把注意力留給真正需要判斷的地方。</p></div>
+      <div class="principles-grid">
+        <article class="principle"><div class="principle-art art-separate" aria-hidden="true"><span>Agent<br><b>實作</b></span><i>↔</i><span>Verifier<br><b>驗收</b></span></div><span class="number">01 / INDEPENDENCE</span><h3>寫的人，不替自己蓋章。</h3><p>Agent 可以提出成果，但不能改寫當次驗收規則或最終結論。以受保護的驗證器，觀察實際畫面、請求與狀態。</p></article>
+        <article class="principle"><div class="principle-art art-evidence" aria-hidden="true"><span>需求</span><i>—</i><span>行為</span><i>—</i><span class="filled">證據 ✓</span></div><span class="number">02 / TRACEABILITY</span><h3>每個通過，都能追問。</h3><p>從哪一條需求出發、測了哪些情境、對應哪個版本，都有明確關聯。成果一旦改變，舊證據就需要重新判斷。</p></article>
+        <article class="principle"><div class="principle-art art-unknown" aria-hidden="true"><span>✓ 已驗證</span><span>× 不符合</span><span>? 未知</span></div><span class="number">03 / HONESTY</span><h3>未知，也是重要的結果。</h3><p>漏跑、環境異常與人工品質判斷，各有自己的狀態。缺少證據時保留問題，避免把沉默誤認為通過。</p></article>
+      </div>
+      <div class="principle-note"><span class="asterisk" aria-hidden="true">✳</span><p>我們想減少的，是重新理解整份 diff 的成本。<br><strong>衡量成效，看淨人工工時與偏差偵測，而非綠勾的數量。</strong></p><span class="small-tag">待實際試點驗證的產品假設</span></div>
+    </section>
+
+    <section id="architecture" class="architecture-section">
+      <div class="wrap section">
+        <div class="section-heading"><div><p class="eyebrow">02 — ARCHITECTURE</p><h2>信任，來自清楚的邊界。</h2></div><p class="section-intro">Core 負責治理，Harness 專注執行。<br>驗證器獨立於成果，交付則有自己的授權。<br><span class="hint">點選架構節點，探索各層的責任與限制。</span></p></div>
+        <div class="architecture-layout">
+          <div class="architecture-map" role="group" aria-label="互動式架構圖">
+            <div class="map-heading"><span>GOV / SYSTEM OVERVIEW</span><span>PROPOSED v0.2</span></div>
+            <button class="arch-node" data-layer="intent" aria-pressed="false"><span class="node-index">01</span><span><strong>Intent & Behavior Plan</strong><small>需求來源 → 行為描述 → 人工確認</small></span><span class="node-arrow">↗</span></button>
+            <div class="map-connector" aria-hidden="true">↓ <span>凍結計畫與授權</span></div>
+            <button class="arch-node selected" data-layer="control" aria-pressed="true"><span class="node-index">02</span><span><strong>Governance Core</strong><small>Controller · Policy · Risk Observer</small></span><span class="node-arrow">↗</span></button>
+            <div class="map-connector" aria-hidden="true">↓ <span>限縮權限 · 觀察例外</span></div>
+            <div class="execution-boundary"><span class="boundary-label">隔離執行邊界</span><button class="arch-node" data-layer="execution" aria-pressed="false"><span class="node-index">03</span><span><strong>Harness → Candidate</strong><small>實作工作區 → 不可變成果快照</small></span><span class="node-arrow">↗</span></button></div>
+            <div class="map-connector" aria-hidden="true">↓ <span>固定版本 · 外部觀察</span></div>
+            <button class="arch-node" data-layer="verification" aria-pressed="false"><span class="node-index">04</span><span><strong>Independent Verification</strong><small>Gate A 行為驗證 ＋ Gate B 風險發現</small></span><span class="node-arrow">↗</span></button>
+            <div class="map-connector" aria-hidden="true">↓ <span>證據完整性 · 接受政策</span></div>
+            <button class="arch-node" data-layer="delivery" aria-pressed="false"><span class="node-index">05</span><span><strong>Evidence → Delivery</strong><small>證據摘要 → 人工處置 → 授權交付 / CI</small></span><span class="node-arrow">↗</span></button>
+          </div>
+          <div class="architecture-detail" id="architecture-detail" aria-live="polite"></div>
+        </div>
+        <div class="profiles"><div><span>三種保證範圍</span><small>使用情境與保證強度，分開定義。</small></div><p><strong>Observe</strong><span>觀察變更與風險</span></p><p><strong>Controlled</strong><span>在已驗證路徑攔截操作</span></p><p><strong>Certified candidate</strong><span>驗證指定快照的成果</span></p></div>
+      </div>
+    </section>
+
+    <section id="workflow" class="section wrap">
+      <div class="section-heading"><div><p class="eyebrow">03 — HOW IT WORKS</p><h2>從意圖，到有依據的交付。</h2></div><p class="section-intro">在開始前確認理解、例外時作出選擇，<br>最後檢查剩餘風險。每個環節都有明確產物。</p></div>
+      <div class="workflow-steps" role="group" aria-label="選擇流程階段">
+        <button data-step="0" aria-pressed="true" class="active"><span>01</span>確認需求<small>INTENT</small></button><button data-step="1" aria-pressed="false"><span>02</span>凍結計畫<small>AUTHORIZE</small></button><button data-step="2" aria-pressed="false"><span>03</span>受控執行<small>EXECUTE</small></button><button data-step="3" aria-pressed="false"><span>04</span>獨立驗證<small>VERIFY</small></button><button data-step="4" aria-pressed="false"><span>05</span>審查證據<small>REVIEW</small></button><button data-step="5" aria-pressed="false"><span>06</span>授權交付<small>DELIVER</small></button>
+      </div>
+      <div id="workflow-detail" class="workflow-detail" aria-live="polite"></div>
+    </section>
+
+    <section id="playground" class="playground-section">
+      <div class="wrap section">
+        <div class="section-heading"><div><p class="eyebrow">04 — INTERACTIVE PLAYGROUND</p><h2>一次小實驗，<br>看見治理的差別。</h2></div><div class="section-intro"><p>選一個常見情境，調整條件並執行模擬。<br>觀察同一條需求，如何得到不同的驗收結論。</p><span class="demo-label"><span class="status-dot"></span> 瀏覽器內概念模擬 · 不連接真實 Agent</span></div></div>
+        <div class="scenario-tabs" role="group" aria-label="選擇模擬情境"><button data-scenario="config" class="active" aria-pressed="true"><span>01</span> 設定被寫死</button><button data-scenario="pending" aria-pressed="false"><span>02</span> 重複送出請求</button><button data-scenario="stale" aria-pressed="false"><span>03</span> 證據已經過期</button></div>
+        <div class="simulator">
+          <div class="scenario-controls"><span class="panel-kicker">YOUR EXPERIMENT</span><h3 id="scenario-title"></h3><p id="scenario-description"></p><div class="requirement"><span>需求契約</span><p id="scenario-requirement"></p></div><form id="simulation-form"><fieldset><legend>選擇實作方式</legend><label class="radio-option"><input type="radio" name="implementation" value="buggy" checked><span id="buggy-label"></span></label><label class="radio-option"><input type="radio" name="implementation" value="fixed"><span id="fixed-label"></span></label></fieldset><div id="scenario-input"></div><label class="field-label" for="environment">驗證環境</label><select id="environment"><option value="ready">正常：完整取得觀察結果</option><option value="interrupted">異常：觀察器中斷</option></select><div class="simulation-actions"><button class="button primary" id="run-simulation" type="submit">執行模擬 <span aria-hidden="true">→</span></button><button type="button" id="reset-simulation" class="reset-button">重設</button></div></form></div>
+          <div class="scenario-output"><div class="output-heading"><span class="panel-kicker">EVIDENCE CONSOLE</span><span id="console-state">READY</span></div><div id="simulation-result" aria-live="polite" aria-atomic="true"></div></div>
+        </div>
+        <p class="simulation-footnote">這裡執行的是簡化的前端行為模型，展示框架的判定原則；不會存取你的專案，也不代表已具備完整的隔離驗證能力。</p>
+      </div>
+    </section>
+
+    <section id="guide" class="section wrap guide-section">
+      <div class="section-heading"><div><p class="eyebrow">05 — GO DEEPER</p><h2>理解承諾，也理解界線。</h2></div><p class="section-intro">架構的價值，在於能被檢驗。<br>從核心名詞到完整規格，繼續往下探索。</p></div>
+      <div class="guide-grid"><div class="faq-list">
+        <details open><summary>Gate A 與 Gate B 有什麼不同？<span>＋</span></summary><p>Gate A 依固定規則檢查可觀察行為，例如請求次數、錯誤狀態與設定變動。Gate B 發現架構、抽象與需求解讀的語意風險，提供位置、理由與待處置事項。Gate B 沒有發現問題，不等於成果正確。</p></details>
+        <details><summary>Behavior IR 為什麼還需要 Project Binding？<span>＋</span></summary><p>「送出失敗後保留輸入」描述的是行為；Project Binding 補上真實路由、按鈕 selector、API transport、fixture 與啟動方式。兩者搭配固定版本的 Verifier Pack，才有可執行的驗收計畫。Binding 缺漏必須揭露，不能任意猜測。</p></details>
+        <details><summary>PASS 是不是代表可以直接合併？<span>＋</span></summary><p>PASS 只描述指定情境的驗證結論。接受資格還需要證據有效、必要人工項目已處置、沒有阻擋風險，且授權有效。Apply、push、merge 與 deploy 各自需要相應授權；整合版本改變時，也需要重新驗證。</p></details>
+        <details><summary>為什麼「未知」不能算通過？<span>＋</span></summary><p>驗證環境壞了、檢查未執行，或證據對應舊版本，都不能支持現在的成果。INCONCLUSIVE、NOT_RUN 與 STALE 會阻擋自動接受，直到補足證據或依政策完成明示處置。人工項目不會被改寫為自動 PASS。</p></details>
+        <details><summary>目前可以使用到什麼程度？<span>＋</span></summary><p>目前是 v0.2 架構討論稿與本網站的概念模擬，治理核心、Harness adapter 與隔離驗證尚未實作。建議先以單一前端專案、單一 Harness 與六類行為範本做 Prototype，量測接入成本、缺陷偵測與淨人工工時，再逐步擴充。</p></details>
+      </div><div class="reading-list"><p class="panel-kicker">THE SOURCE OF TRUTH</p><a href="./docs/specification.md" target="_blank" rel="noopener"><span>01</span><div><h3>產品與技術規格</h3><p>核心契約、Gate、生命週期與驗收範例</p><small>完整規格 · Markdown</small></div><b aria-hidden="true">↗</b></a><a href="./docs/feasibility-and-decisions.md" target="_blank" rel="noopener"><span>02</span><div><h3>可行性與決策</h3><p>可行範圍、風險、待驗證假設與取捨</p><small>研究紀錄 · Markdown</small></div><b aria-hidden="true">↗</b></a><a href="./docs/source-map.md" target="_blank" rel="noopener"><span>03</span><div><h3>設計溯源</h3><p>原稿 73 節與整理後規格的逐項對照</p><small>來源對照 · Markdown</small></div><b aria-hidden="true">↗</b></a></div></div>
+      <div class="closing"><span class="closing-mark" aria-hidden="true">✳</span><h2>讓自治前進，<br>讓判斷有據。</h2><a class="button primary" href="#playground">從一個情境開始 <span aria-hidden="true">↗</span></a></div>
+    </section>
+  </main>
+  <footer class="wrap"><a class="brand" href="#"><img src="./favicon.svg" width="28" height="28" alt=""><span>gov.</span></a><span>工程 AI 執行治理框架</span><span>架構討論稿 v0.2 · 2026</span><a href="#main">回到頂端 ↑</a></footer>
+  <noscript><div class="noscript">此網站的架構探索與模擬需要 JavaScript。你仍可閱讀設計理念、常見問題與完整規格文件。</div></noscript>
+</body>
+</html>

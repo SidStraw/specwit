@@ -1,0 +1,47 @@
+schema: governed-delivery
+
+context: |
+  使用台灣繁體中文；保留 OpenSpec 結構標題、SHALL/MUST、ID 與程式碼的英文。
+  本專案示範工程 AI 治理流程，優先整合 OpenCode；目前只有流程設定，保證範圍為 Observe。
+  先讀 README.md、WORKFLOW.md 與 GAPS.md。fixtures/ 是教學輸入，並非真實產品或人工核准。
+  每條來源需求都要對應行為、人工項目、待澄清或經確認的排除理由；不可在摘要中消失。
+  將規劃完成、程式實作、檢查結果、接受決策、Task 完成分開。檔案存在或核取方塊不是驗收證據。
+  需求、binding、policy、verifier 或 Candidate 改變後，舊確認與結果需重新判定，不沿用 PASS。
+  必要未知、未執行、過期或無效結果不得當成通過；可程式化但缺 adapter 的條件屬於缺口。
+  Gov 資料留在專案內，Task 明確完成後清除任務資料；保留交付成果與共用規則，不保留永久收據。
+  本範例未提供受保護 runner、確認入口、Candidate freeze 或 finalizer；缺少能力時如實列為阻擋。
+
+rules:
+  proposal:
+    - 列出來源版本與位置、scope、non-goals、真實專案的 discovery，以及 completion_target（LOCAL 或 CI）。
+    - 未知的版本、權限或契約填 unknown，不得捏造確認者、digest 或產品現況。
+  specs:
+    - 保留 Purpose、ADDED/MODIFIED Requirements、Requirement、Scenario、WHEN/THEN 格式及 SHALL/MUST。
+    - 每條需求有穩定 ID 與可觀察情境；必要時含失敗或邊界案例，不描述實作細節。
+  behavior-plan:
+    - 顯示來源需求、行為、程式化與人工部分、驗證缺口及測試價值；不以測試數量代表品質。
+    - 六類起始情境為初始狀態、pending/重複送出、成功、失敗、reload、config；只選與任務相關者。
+  design:
+    - 明確分開已觀察的專案接法與提案，記錄 route、locator、transport、fixture、啟動方式及觀察窗。
+    - 同一使用者下的不同目錄或新的 reviewer session，不得宣稱已建立權限隔離。
+  verification-contract:
+    - 產生可解析 JSON；必須列出 expectedChecks、binding、verifier、review rubric、人工項目及清理範圍。
+    - 未取得可核對的人工確認時 confirmation.status 保持 PENDING；空值不得當成核准或已凍結。
+  tasks:
+    - 使用 - [ ] X.Y 格式；每項包含完成證據，功能工作同時納入有價值的測試。
+    - 包含確認、baseline、實作、Candidate、Gate A/B、交付、明確完成與清理；外部能力不足時保持未勾選。
+
+operations:
+  apply:
+    guidance:
+      - 開始前讀 WORKFLOW.md，核對 verification-contract.json 的確認來源、適用版本、binding 及既有授權。
+      - 不要求重複核准已有且仍有效的授權；缺少有效確認或必要外部能力時回報具體缺口。
+      - 依既有測試加有價值的增量驗證執行；不得自行改通過標準或將失敗與未知改寫成 PASS。
+      - Candidate 修正後建立新 attempt，保留先前失敗；reviewer 回覆依 contracts/review-result.schema.json 接收，格式與證據對應另由外部接收端驗證。
+      - completion_target 為 CI 時保留可重建契約並回報 WAITING_FOR_CI；本機 PASS 不等於 Task 完成。
+      - 外部 finalizer 未接上時保留完成清理任務，回報 BLOCKED_EXTERNAL；不得用 archive 取代清理。
+  archive:
+    guidance:
+      - 說明 archive 會保留 change 資料，與本專案 Task 完成後清除的方向不同；回報這項差異。
+      - archive 只表示 OpenSpec 封存，不是治理驗收或完成證明，不得據此回報 COMPLETED。
+      - 這些 guidance 不改變內建 archive 的操作、CLI 判斷或使用者選擇；清理由另外的完成入口處理。

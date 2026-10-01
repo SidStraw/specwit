@@ -1,0 +1,86 @@
+name: governed-delivery
+version: 1
+description: 需求與行為確認 → 專案接法 → 驗證契約 → 實作、驗證與明確完成的流程指引
+
+artifacts:
+  - id: proposal
+    generates: proposal.md
+    description: 來源、範圍、discovery 與完成位置
+    template: proposal.md
+    instruction: |
+      建立需求提案。列出來源內容的位置與版本、目前觀察、假設、範圍與完成位置。
+      先檢查現有 specs；新 capability 用穩定的 kebab-case 名稱，修改既有 capability 保留原路徑。
+      本 schema 用於有行為契約的任務；純文件或重構可另選較輕量的 schema，不為通過檢查捏造需求。
+    requires: []
+
+  - id: specs
+    generates: specs/**/*.md
+    description: 可觀察行為的 OpenSpec delta specs
+    template: spec.md
+    instruction: |
+      依 proposal 的 Capabilities 建立 specs/<capability>/spec.md。
+      使用 ## ADDED Requirements 或 ## MODIFIED Requirements，需求標題為 ### Requirement:。
+      每條需求包含 SHALL/MUST 及至少一個 #### Scenario:，情境用 WHEN/THEN。
+      修改既有需求時完整保留原需求與情境，再作必要修改；移除需求附 Reason 與 Migration。
+      新 capability 加入至少 50 字元的 Purpose；既有 capability 的 Purpose 不在 delta 中重寫。
+      需求名稱含穩定 ID，方便 behavior-plan 逐項對照；不要將 selector 或實作步驟放進規格。
+    requires: [proposal]
+
+  - id: behavior-plan
+    generates: behavior-plan.md
+    description: 需求到行為、人工項目、驗證價值與未知的完整對照
+    template: behavior-plan.md
+    instruction: |
+      列出每條來源需求及其去向，區分行為、人工項目、待澄清與明確排除。
+      對每個行為描述輸入、可觀察結果、反例、既有檢查與新增驗證價值。
+      分開 verification mode 與 readiness；缺少工具不可改稱 HUMAN_ONLY。
+      產出供人確認的草稿；未取得有效確認時保持 PENDING。
+    requires: [specs]
+
+  - id: design
+    generates: design.md
+    description: Project Binding、實作方式與信任邊界
+    template: design.md
+    instruction: |
+      讀取相關程式、測試與環境後，記錄已觀察的接法與仍待確認的提案。
+      對行為填入 route、locator、transport、fixture、啟動方式與觀察窗；不存在時填 MISSING。
+      列出 Writer、runner、reviewer、確認及完成入口的權限邊界。
+      本 schema 的 design 必填；小任務可簡短，不引入不需要的 runtime 或平台。
+    requires: [behavior-plan]
+
+  - id: verification-contract
+    generates: verification-contract.json
+    description: 可攜至本機或 CI 的結構化驗證輸入草稿
+    template: verification-contract.json
+    instruction: |
+      依 JSON 範本產生純 JSON，不加 Markdown fence。
+      將來源、需求/行為 IDs、binding、policy、verifier、expectedChecks、rubric 與人工項目連結。
+      空陣列代表尚未填妥或明確不適用，必須在 behavior-plan 說明，不能解讀成無條件通過。
+      template 中 schemaVersion 是本範例的提案版本，不表示已有 runtime validator。
+      必須保留 confirmation.status=PENDING，直到能引用符合該計畫版本的真實確認。
+      Agent 不得自簽核准或虛構 digest；可信確認、凍結及接收驗證屬外部能力。
+    requires: [behavior-plan, design]
+
+  - id: tasks
+    generates: tasks.md
+    description: 含驗收、交付與完成清理條件的工作清單
+    template: tasks.md
+    instruction: |
+      建立可逐項追蹤的工作。每個 checkbox 帶完成證據，功能工作內含相應測試與文件。
+      先核對確認與 binding，再做 baseline、實作及驗證，最後交付與明確完成。
+      需要外部能力的項目標明 BLOCKED_EXTERNAL 條件；清單生成時不預勾實作或驗證項目。
+      Gate A、Gate B 與 finalization 是實作後的操作，不能因規劃文件存在而視為已完成。
+    requires: [verification-contract]
+
+apply:
+  # 全部直接列出，避免只有 tasks.md 時 CLI 未檢查其上游是否齊全。
+  requires: [proposal, specs, behavior-plan, design, verification-contract, tasks]
+  tracks: tasks.md
+  instruction: |
+    先讀 WORKFLOW.md 及 contextFiles，核對人確認的契約、適用版本和操作授權。
+    OpenSpec 的 ready 只代表檔案與待辦存在，不能代表 confirmation 有效。
+    依 tasks 執行 baseline 與實作；有實際證據才勾選，不以自述 PASS 代替 runner 結果。
+    實作後交由外部工具凍結 Candidate、執行 Gate A 與獨立 Gate B，核對 check 完整性與版本。
+    必要未知、未跑、過期或無效結果保持未完成；改 code/plan/binding 後重新核對並建立新 attempt。
+    完成位置為 CI 時保留契約等待 CI 新 Run；交付與完成仍遵守既有授權範圍。
+    外部 finalizer 未提供時回報 BLOCKED_EXTERNAL 並保留完成清理任務；不自行 archive 或刪除資料。
