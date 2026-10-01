@@ -9,11 +9,12 @@
 | 檔案 | 用途 |
 |---|---|
 | [GAPS.md](GAPS.md) | 已實測的限制、需外部補強的能力與建議順序 |
+| [gov CLI](../packages/cli/README.md) | 已實作的 Observe 檢查、runner、review 匯入與打包操作 |
 | [WORKFLOW.md](WORKFLOW.md) | 從規劃到 LOCAL／CI 完成的操作方式與責任界線 |
 | [config.yaml](openspec/config.yaml) | 專案背景、各產物規則、apply／archive 指引 |
 | [schema.yaml](openspec/schemas/governed-delivery/schema.yaml) | 六種產物、範本與相依關係 |
 | [daily-check-in](openspec/changes/daily-check-in/proposal.md) | 完整但未核准實作的教學 change |
-| [review-result.schema.json](contracts/review-result.schema.json) | reviewer 回覆格式提案，尚未接上接收端 |
+| [review-result.schema.json](contracts/review-result.schema.json) | reviewer 回覆格式；gov 接收端已載入驗證 |
 | [check-example.mjs](scripts/check-example.mjs) | 可重跑的 CLI 整合檢查與限制探測 |
 
 ## 初始化紀錄
@@ -51,7 +52,7 @@ OpenSpec 的相依圖只涵蓋前六項**規劃產物**。驗證結果與 finali
 
 ## 檢查與試讀
 
-需求：Node.js 22 以上、可從 PATH 執行的 OpenSpec 1.14.0。這份示例沒有另外安裝 npm 依賴。`OPENSPEC_BIN` 可指定另一個 OpenSpec 執行檔；不接受含參數的 shell 字串。
+OpenSpec 探測需求：Node.js 22 以上、可從 PATH 執行的 OpenSpec 1.14.0。此探測腳本沒有另外安裝 npm 依賴。`OPENSPEC_BIN` 可指定另一個 OpenSpec 執行檔；不接受含參數的 shell 字串。
 
 ```sh
 cd /path/to/project/example
@@ -68,12 +69,22 @@ node scripts/check-example.mjs
 
 檢查腳本已通過 **10 項**整合檢查：包含設定載入、strict spec validation、缺檔阻擋，以及 pending 確認、無效 JSON、過期計畫、無證據勾選與 archive 的限制。會在系統暫存目錄建立副本，僅在副本做破壞性探測，最後移除；不修改這份 change。
 
-上述 PASS 只表示示例配置與所記錄的 CLI 行為符合預期。未執行產品測試、模型 review、權限隔離、CI 或完成清理；JSON Schema 文件也未接上 runtime validator。
+上述 PASS 只表示示例配置與所記錄的 OpenSpec 行為符合預期。未執行產品測試、模型 review、權限隔離、CI 或完成清理。
+
+另已加入 TypeScript 的 `gov` CLI，可從儲存庫根目錄建置並檢查此示例（需 Node.js 22.18 以上及 pnpm）：
+
+```sh
+pnpm install --frozen-lockfile
+pnpm cli:build
+node packages/cli/dist/gov.mjs check daily-check-in --root example --json
+```
+
+預期為 `BLOCKED`、exit code 2：人確認、binding/verifier、runner 與版本摘要仍未準備。`gov verify` 也會在前置檢查阻擋，不會建立此示例的 runtime。CLI 的成功／失敗測試使用暫存的合成 fixture，不將其人工確認或產品結果寫回教學 change。[完整指令與接入方式](../packages/cli/README.md)
 
 ## 用於真實任務
 
-在此專案的 OpenCode 中，已安裝的規劃入口是 `/opsx-propose`，實作入口是 `/opsx-apply`；沒有安裝額外的 verify workflow，也沒有虛構 `gov complete` 指令。
+在此專案的 OpenCode 中，已安裝的規劃入口是 `/opsx-propose`，實作入口是 `/opsx-apply`。`gov` 是另行建置／安裝的輔助 CLI，沒有自動安裝新的 OpenCode workflow；`gov complete` 目前只預覽清理範圍。
 
 若移入真實 repo，先以相同版本執行 `openspec init --tools opencode`，再合併本示例的 config、schema、WORKFLOW 與回覆契約；保留該專案原有規則。不要把教學 change 當成已核准的產品需求。既有 changes 會保留原本 schema，需要逐一評估，不能只改預設值就視為已遷移。
 
-目前最小下一步是補一個真實專案的 binding、runner 與結果接收端，量測相對於「OpenSpec＋既有測試／CI＋reviewer」的增量價值。[補強順序與驗收條件](GAPS.md)
+目前最小下一步是用已實作的接收端接上一個真實專案的 binding 與 runner，再補可信執行邊界，量測相對於「OpenSpec＋既有測試／CI＋reviewer」的增量價值。[補強順序與驗收條件](GAPS.md)

@@ -1,6 +1,6 @@
 # 工程 AI 執行治理框架｜方向總覽
 
-> 討論稿 v0.3｜更新日期：2026-09-30。已納入 OpenCode、驗證價值、結構化評估及完成清理的討論；治理核心尚未實作或執行 Prototype。已確認方向與待定細節分列於第 6 節。
+> 討論稿 v0.3｜規格日期：2026-09-30。2026-10-01 已加入 [OpenSpec 客製化示例](example/README.md) 與 [TypeScript gov CLI](packages/cli/README.md)：提供 Observe 前置檢查、驗證執行、review 接收與版本判斷；受保護治理核心、真實專案驗收及完成清理尚未完成。已確認方向與待定細節分列於第 6 節。
 
 **建議繼續驗證這個方向，先證明「獨立驗收證據能降低人工 review 成本」，再擴充跨 Harness 的即時治理。** 原稿的控制、觀察、驗證與稽核機制在限定範圍內可實作；最不確定的是需求轉換的準確度、專案接入成本，以及總體上是否真的省下工程師時間。
 
@@ -93,7 +93,7 @@ flowchart LR
 | D16：誰提交 Git 清理、如何驗最終 SHA、如何清本機副本 | 待設計與實驗，不能只刪 runner 檔案 | [CI 完成流程](docs/specification.md#ci-completion) |
 | D17：未完成／取消／逾期任務的容量與丟棄規則 | 待決定，避免未完成任務持續累積 | [成本與限制](docs/specification.md#s12) |
 
-Task／Run／session 的欄位與狀態名稱、TypeScript Core、CLI／Plugin API 都是實作提案，尚未實測。Git 刪檔不會移除歷史；完成後也不保留 gov 的永久 audit。其餘信任邊界、權責及驗證門檻見 [完整決策表](docs/feasibility-and-decisions.md#f6)。
+完整治理框架的 Task／Run／session 與 Plugin API 仍是提案；目前 [gov CLI 0.1.0](packages/cli/README.md) 已實作並測試有限的 Observe 切片，與完整規格的差距見 [GAPS](example/GAPS.md)。Git 刪檔不會移除歷史；完成後也不保留 gov 的永久 audit。其餘信任邊界、權責及驗證門檻見 [完整決策表](docs/feasibility-and-decisions.md#f6)。
 
 ## 7. 完整閱讀入口
 

@@ -34,6 +34,25 @@ G04 是宣稱受保護驗收的必要條件，不能等到量產才補；沒有�
 
 G08 還有狀態歸屬問題：內建 apply 在全勾選後會建議 archive，但外部清理會移除 change 與 tasks.md。完成入口必須在清理前核對條件、清理後核對資源，而不是期待 OpenSpec 保留一份永久 all_done 紀錄。
 
+## gov CLI 0.1.0 已補上的部分
+
+上表保留 OpenSpec 本身的界線；目前另有 [TypeScript CLI](../packages/cli/README.md)，以 minimist 解析參數、Zod 驗證資料、Ajv 載入 reviewer JSON Schema，並用 tsdown 打包。這是可執行的 Observe 切片，所有輸出仍為 `eligible: false`。
+
+| 缺口 | 目前已實作 | 仍需補強 |
+|---|---|---|
+| G01 | 確認來源檔案存在、計畫 digest 對應與失效檢查 | 確認者身分與真正授權不可由檔案欄位證明 |
+| G02 | 嚴格契約驗證、需求覆蓋、ID 唯一性、資源引用與 digest | 內容理解正確性、來源需求是否被完整擷取 |
+| G03 | argv runner、結構化 check 回覆、實際子程序測試 | 真實產品的 binding、測試 adapter 與缺陷偵測價值 |
+| G04 | 明確限制為 Observe | policy/verifier/reporter 隔離與可信結果來源 |
+| G05 | 規劃與宣告輸入前後雜湊、版本變動轉為 STALE | 不可變 snapshot、完整 inputs／環境與 head/base 綁定 |
+| G06 | 缺漏／重複結果、FAIL／未知、人工項目、追加 Run／review attempts | 受保護結果接收、接受決策與發布權限 |
+| G07 | review envelope、專案 JSON Schema、criterion 與同 Run 的 check 證據引用 | 新 reviewer session 啟動、唯讀隔離、模型來源與附件證據 |
+| G08 | `complete` 顯示 Task 專屬 change/runtime 清理預覽 | 實際 finalizer、交付與資源所有權核對、可重試清理 |
+| G09 | 保留 LOCAL／CI 目標，CI 完成預覽回報 WAITING_FOR_CI | CI workflow、新 Run、required check、可信 publisher |
+| G10 | 每項 timeout、Task Run 次數上限、鎖、取消與程序群組終止嘗試 | 全面程序回收、即時 observer、撤銷及預算管理 |
+
+功能測試涵蓋真實子程序的 PASS／FAIL、timeout、無效結果、版本變動、錯誤 review 與隔離目錄中的打包執行；測試的確認資料是合成 fixture，不是人核准，也沒有跑教學簽到產品。`pnpm cli:test` 可重跑。完成清理仍保持 BLOCKED_EXTERNAL，沒有刪除模式。
+
 ## CLI 實測紀錄
 
 重跑：`node scripts/check-example.mjs`。腳本在自動清除的暫存副本操作，不改原始範例，也不連接產品服務。
@@ -58,7 +77,7 @@ G08 還有狀態歸屬問題：內建 apply 在全勾選後會建議 archive，�
 2. **再處理明確完成。** 補 G08，驗證保留／清理／重試與交付版本；需要 CI 時再接 G09。D16 的最終 SHA 與離線本機清理、D17 的未完成任務保留仍需決策，不能只用 shell 刪資料夾解決。
 3. **量測後才擴充即時管控。** G10、更多 Harness、平行 worker 與 dashboard 先延後。比較基準包含客製化 OpenSpec＋既有測試／CI＋reviewer；計入需求確認、binding、例外、最終 review 與維護工時。
 
-第一步可以是小型 CLI／腳本與既有 CI 整合，不預設另做完整 Controller 平台。只有證明額外驗收能抓到有價值的錯誤並降低淨人工成本，才擴大範圍。
+小型 CLI 已有可執行切片；接下來驗證真實專案與受保護 runner，不預設另做完整 Controller 平台。只有證明額外驗收能抓到有價值的錯誤並降低淨人工成本，才擴大範圍。
 
 ## 來源與適用範圍
 

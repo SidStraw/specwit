@@ -28,7 +28,7 @@
             "else": {
               "properties": {
                 "confidence": { "type": "number" },
-                "evidenceIds": { "minItems": 1 }
+                "evidenceIds": { "type": "array", "minItems": 1 }
               }
             }
           }
